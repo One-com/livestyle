@@ -1,0 +1,25 @@
+{
+    "contributors": [
+        {
+            "name": "Peter Müller",
+            "email": "pm@one.com"
+        },
+        {
+            "name": "Andreas Lind Petersen",
+            "email": "andreas@one.com"
+        }
+    ]
+    "name": "LiveStyle",
+    "description": "NodeJS middleware and binary for setting up a webserver that notifies the browser of CSS updates.",
+    "version": "0.0.0",
+    "homepage": "https://github.com/One-com/LiveStyle",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/One-com/LiveStyle.git"
+    },
+    "engines": {
+        "node": ">= 0.4.0"
+    },
+    "dependencies": {},
+    "devDependencies": {}
+}
