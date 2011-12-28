@@ -2,6 +2,18 @@
 (function () {
     'use strict';
 
+    if (!Array.prototype.indexOf) {
+        Array.prototype.indexOf = function (o, from) {
+            var i = from || 0;
+            for (; i < this.length; i += 1) {
+                if (this[i] === o) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+    }
+
     var pollTimeout = 2000,
         findCssIncludes = function () {
             var cssIncludes = [],
@@ -26,13 +38,14 @@
                     }
                 }
             }
-
             for (i = 0; i < document.styleSheets.length; i += 1) {
                 styleSheet = document.styleSheets[i];
-                for (j = 0; j < styleSheet.cssRules.length; j += 1) {
-                    cssRule = styleSheet.cssRules[j];
-                    if (cssRule.type === 3 && isLocal(cssRule.href)) { // CSSImportRule
-                        cssIncludes.push({type: 'import', href: cssRule.href, node: cssRule, styleElement: styleSheet.ownerNode});
+                if (styleSheet.cssRules) { // Not present in IE?
+                    for (j = 0; j < styleSheet.cssRules.length; j += 1) {
+                        cssRule = styleSheet.cssRules[j];
+                        if (cssRule.type === 3 && isLocal(cssRule.href)) { // CSSImportRule
+                            cssIncludes.push({type: 'import', href: cssRule.href, node: cssRule, styleElement: styleSheet.ownerNode});
+                        }
                     }
                 }
             }
