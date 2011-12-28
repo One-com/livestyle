@@ -10,8 +10,8 @@
         }
     ],
     "name": "LiveStyle",
-    "description": "NodeJS middleware and binary for setting up a webserver that notifies the browser of CSS updates.",
-    "version": "0.0.0",
+    "description": "NodeJS middleware and binary for setting up a webserver that notifies the browser of CSS updates. Polling fallback for pure client side functionality.",
+    "version": "0.0.1",
     "homepage": "https://github.com/One-com/LiveStyle",
     "repository": {
         "type": "git",
@@ -29,5 +29,6 @@
     "directories": {
         "bin": "./bin"
     },
-    "devDependencies": {}
+    "devDependencies": {},
+    "preferGlobal": true
 }
