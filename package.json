@@ -9,13 +9,13 @@
             "email": "andreas@one.com"
         }
     ],
-    "name": "LiveStyle",
+    "name": "livestyle",
     "description": "NodeJS middleware and binary for setting up a webserver that notifies the browser of CSS updates. Polling fallback for pure client side functionality.",
-    "version": "0.0.1",
-    "homepage": "https://github.com/One-com/LiveStyle",
+    "version": "0.0.2",
+    "homepage": "https://github.com/One-com/livestyle",
     "repository": {
         "type": "git",
-        "url": "git://github.com/One-com/LiveStyle.git"
+        "url": "git://github.com/One-com/livestyle.git"
     },
     "engines": {
         "node": ">= 0.4.0"
