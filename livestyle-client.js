@@ -15,6 +15,14 @@
     }
 
     var pollTimeout = 2000,
+        cleanHref = function (href) {
+            var local = new RegExp('^' + document.location.protocol + '//' + document.location.host.replace(/[\.]/g, '\\$0') + '/', 'i'),
+                remote = /:\/\/|^\/\//;
+
+            href = href.replace(local, '');
+
+            return !remote.test(href) && href;
+        },
         findCssIncludes = function () {
             var cssIncludes = [],
                 links = document.getElementsByTagName('link'),
@@ -22,29 +30,25 @@
                 cssRule,
                 i,
                 j,
-                href,
-                isLocal = function (href) {
-                    var local = new RegExp("^" + document.location.protocol + "//" + document.location.host.replace(/[\.]/g, '\\$0')),
-                        remote = /:\/\/|^\/\//;
-
-                    return local.test(href) || !remote.test(href);
-                };
+                href;
 
             for (i = 0; i < links.length; i += 1) {
                 if (/\bstylesheet\b/i.test(links[i].getAttribute('rel'))) {
-                    href = links[i].getAttribute('href');
-                    if (isLocal(href)) {
+                    href = cleanHref(links[i].getAttribute('href'));
+                    if (href) {
                         cssIncludes.push({type: 'link', href: href, node: links[i]});
                     }
                 }
             }
+
             for (i = 0; i < document.styleSheets.length; i += 1) {
                 styleSheet = document.styleSheets[i];
                 if (styleSheet.cssRules) { // Not present in IE?
                     for (j = 0; j < styleSheet.cssRules.length; j += 1) {
                         cssRule = styleSheet.cssRules[j];
-                        if (cssRule.type === 3 && isLocal(cssRule.href)) { // CSSImportRule
-                            cssIncludes.push({type: 'import', href: cssRule.href, node: cssRule, styleElement: styleSheet.ownerNode});
+                        if (cssRule.type === 3) { // CSSImportRule
+                            href = cleanHref(cssRule.href);
+                            cssIncludes.push({type: 'import', href: href, node: cssRule, styleElement: styleSheet.ownerNode});
                         }
                     }
                 }
