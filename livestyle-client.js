@@ -98,16 +98,20 @@
                     watchNewStylesheets = function () {
                         var cssIncludes = findCssIncludes(),
                             toWatch = [],
+                            url,
                             i;
 
                         for (i = 0; i < cssIncludes.length; i += 1) {
-                            if (hrefs.indexOf(cssIncludes[i].href) === -1) {
-                                hrefs.push(cssIncludes[i].href);
-                                toWatch.push(cssIncludes[i].href);
+                            url = removeCacheBuster(cssIncludes[i].href);
+                            if (hrefs.indexOf(url) === -1) {
+                                hrefs.push(url);
+                                toWatch.push(url);
                             }
                         }
 
-                        socket.emit('watch', toWatch, location.href);
+                        if (toWatch.length !== 0) {
+                            socket.emit('watch', toWatch, location.href);
+                        }
                     };
 
                 watchNewStylesheets();
