@@ -7,6 +7,7 @@ The livestyle client also falls back to active polling, which means you can use 
 
 Use livestyle to get live feedback while keeping all your interaction in your favorite editor.
 Effective usage parrterns spotted so far:
+
 * Styling parts of webapplications that require several clicks to set the state that you are styling
 * Getting instant feedback from many browsers at the same time
 * Testing several media queries at the same time with different devices or browser sizes
@@ -38,6 +39,7 @@ I recommend installing node without needing superuser access by configuring your
 Also remember to put node in your `$PATH`
 
 When you have NodeJS run the following command:
+
     npm install -g livestyle
 
 And you are done.
@@ -47,6 +49,7 @@ Supported platforms
 ===================
 Livestyle uses pure web technologies, which have been available for years.
 This means that every browser with javascript on any platform is supported, including mobile.
+
 Currently there are some troubles with updating stylesheets using @import in IE, which you want to avoid anyway http://www.stevesouders.com/blog/2009/04/09/dont-use-import/
 
 
@@ -56,5 +59,6 @@ Since livestyle watches the css files that are actually served to the browser, l
 If you want live updates you will of course need to enable your preprocessors option to automatically build a new CSS files for each file update. livestyle will then detect the update in the built file and push it to the client.
 
 There are two CSS preprocessors that run in the browser, which currently aren't supported:
+
 * Less.js
 * Prefixfree
