@@ -43,6 +43,16 @@
 
             for (i = 0; i < document.styleSheets.length; i += 1) {
                 styleSheet = document.styleSheets[i];
+
+                if (typeof StyleFix !== 'undefined') {
+                    // Prefixfree support
+                    href = cleanHref(styleSheet.ownerNode.href || styleSheet.ownerNode.getAttribute('data-href'));
+
+                    if (href) {
+                        cssIncludes.push({type: 'prefixfree', href: href, node: styleSheet.ownerNode});
+                    }
+                }
+
                 if (styleSheet.cssRules) { // Not present in IE?
                     for (j = 0; j < styleSheet.cssRules.length; j += 1) {
                         cssRule = styleSheet.cssRules[j];
@@ -77,17 +87,23 @@
 
                 if (cssIncludeHref === href) {
                     newHref = addCacheBuster(href);
+
+                    if (cssInclude.type === 'link') {
+                        cssInclude.node.setAttribute('href', newHref);
+                    }
+
                     if (cssInclude.type === 'import') {
                         replacerRegExp = new RegExp("@import\\s+url\\(" + cssInclude.href.replace(/[\?\[\]\(\)\{\}]/g, "\\$&") + "\\)");
                         cssInclude.styleElement.innerHTML = cssInclude.styleElement.innerHTML.replace(replacerRegExp, '@import url(' + newHref + ')');
-                    } else {
-                        cssInclude.node.setAttribute('href', newHref);
-                        if (typeof StyleFix !== 'undefined' && StyleFix.link) { // PrefixFree support http://leaverou.github.com/prefixfree/
-                            freed = cssInclude.node.prefixfreed;
-                            StyleFix.link(cssInclude.node, true);
-                            freed.parentNode.removeChild(freed);
-                        }
                     }
+
+                    if (cssInclude.type === 'prefixfree') {
+                        // The next two lines are hacks to make Prefixfree think this is a link and not a style block
+                        cssInclude.node.setAttribute('href', href); // No cache buster needed
+                        cssInclude.node.rel = 'stylesheet';
+                        StyleFix.link(cssInclude.node);
+                    }
+
                     // Replacing the first occurrence should be good enough. Besides, the @import replacement code invalidates
                     // the rest of the cssIncludes in the same stylesheet.
                     break;

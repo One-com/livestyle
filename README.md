@@ -58,7 +58,12 @@ CSS preprocessors
 Since livestyle watches the css files that are actually served to the browser, livestyle work with any CSS preprocessor that runs on the server out of the box.
 If you want live updates you will of course need to enable your preprocessors option to automatically build a new CSS files for each file update. livestyle will then detect the update in the built file and push it to the client.
 
-There are two CSS preprocessors that run in the browser, which currently aren't supported:
+There are two CSS preprocessors that run in the browser, which is a bit of a special case:
 
-* Less.js
-* Prefixfree
+Prefixfree
+----------
+[Prefixfree](http://leaverou.github.com/prefixfree/) inserts vendor prefixes for the style properties that need them. It does this runtime in the browser by fetchin the stylesheet content thourhg XHR and replace the link tags with a style block with prefixed CSS. Livestyle now supports prefixfree.
+
+Less.js
+-------
+[Less.js](https://github.com/cloudhead/less.js) injects preprocessed style into the page by loading .less files and reworking the content to real CSS. Livestyle does not support live updates with Less.js... yet
