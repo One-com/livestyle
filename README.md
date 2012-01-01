@@ -66,4 +66,4 @@ Prefixfree
 
 Less.js
 -------
-[Less.js](https://github.com/cloudhead/less.js) injects preprocessed style into the page by loading .less files and reworking the content to real CSS. Livestyle does not support live updates with Less.js... yet
+[Less.js](https://github.com/cloudhead/less.js) injects preprocessed style into the page by loading .less files and reworking the content to real CSS. Livestyle supports live updates using Less.js by refreshing all less stylesheets on the page.
