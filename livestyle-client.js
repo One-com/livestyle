@@ -90,6 +90,14 @@
 
                     if (cssInclude.type === 'link') {
                         cssInclude.node.setAttribute('href', newHref);
+
+                        // Less.js support (https://github.com/cloudhead/less.js)
+                        if (/\bstylesheet\/less\b/i.test(cssInclude.node.getAttribute('rel')) && typeof less !== 'undefined') {
+                            // Sadly this method isn't accessible
+                            // less.loadStyleSheet(cssInclude.node, function () {}, false, 0);
+                            // So instead we'll just have to brutally refresh ALL less includes
+                            less.refresh();
+                        }
                     }
 
                     if (cssInclude.type === 'import') {
