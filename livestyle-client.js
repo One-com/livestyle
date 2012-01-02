@@ -1,11 +1,11 @@
-/*global document, location, io, XMLHttpRequest, setTimeout, setInterval, StyleFix, ActiveXObject*/
+/*global document, location, io, XMLHttpRequest, setTimeout, setInterval, clearInterval, StyleFix, less, ActiveXObject*/
 (function () {
     'use strict';
 
     if (!Array.prototype.indexOf) {
         Array.prototype.indexOf = function (o, from) {
-            var i = from || 0;
-            for (; i < this.length; i += 1) {
+            var i;
+            for (i = from || 0; i < this.length; i += 1) {
                 if (this[i] === o) {
                     return i;
                 }
@@ -72,14 +72,39 @@
         addCacheBuster = function (href) {
             return href + (href.indexOf('?') === -1 ? '?' : '&') + 'livestyle=' + new Date().getTime();
         },
+        replaceLinkTag = function (node, href) {
+            var parent = node.parentNode,
+                newNode = node.cloneNode(true),
+                monitor;
+
+            newNode.href = href;
+
+            parent.insertBefore(newNode, node);
+
+            monitor = setInterval(function () {
+                try {
+                    if (newNode.sheet && newNode.sheet.cssRules.length > 0) { // Throws an error if the stylesheet hasn't loaded
+                        clearInterval(monitor);
+                        parent.removeChild(node);
+
+                        // Less.js support (https://github.com/cloudhead/less.js)
+                        if (/\bstylesheet\/less\b/i.test(newNode.getAttribute('rel')) && typeof less !== 'undefined') {
+                            // Sadly this method isn't accessible
+                            // less.loadStyleSheet(cssInclude.node, function () {}, false, 0);
+                            // So instead we'll just have to brutally refresh ALL less includes
+                            less.refresh();
+                        }
+                    }
+                } catch (err) {}
+            }, 50);
+        },
         refresh = function (href) {
             var cssIncludes = findCssIncludes(),
                 i,
                 cssInclude,
                 cssIncludeHref,
                 newHref,
-                replacerRegExp,
-                freed;
+                replacerRegExp;
 
             for (i = 0; i < cssIncludes.length; i += 1) {
                 cssInclude = cssIncludes[i];
@@ -89,15 +114,7 @@
                     newHref = addCacheBuster(href);
 
                     if (cssInclude.type === 'link') {
-                        cssInclude.node.setAttribute('href', newHref);
-
-                        // Less.js support (https://github.com/cloudhead/less.js)
-                        if (/\bstylesheet\/less\b/i.test(cssInclude.node.getAttribute('rel')) && typeof less !== 'undefined') {
-                            // Sadly this method isn't accessible
-                            // less.loadStyleSheet(cssInclude.node, function () {}, false, 0);
-                            // So instead we'll just have to brutally refresh ALL less includes
-                            less.refresh();
-                        }
+                        replaceLinkTag(cssInclude.node, newHref);
                     }
 
                     if (cssInclude.type === 'import') {
