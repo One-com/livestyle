@@ -9,11 +9,25 @@ var express = require('express'),
     app = express.createServer(),
     optimist = require('optimist')
     commandLineOptions = optimist
-        .usage('Usage: $0 [-p <portNumber>] [-h <hostName>] publicDir')
-        .default('host', '0.0.0.0')
-        .alias('host', 'h')
-        .default('port', 3000)
-        .alias('port', 'p')
+        .usage('Usage: $0 [-h <remotehost>] [-l <localhost>] [-p <portNumber>] [-r <rewriterules>] publicDir')
+        .options('h', {
+            alias: 'host',
+            describe: 'The remote host:port to serve non-CSS files from'
+        })
+        .options('l', {
+            alias: 'listen',
+            default: '0.0.0.0',
+            describe: 'The local hostname or IP-address to listen on'
+        })
+        .options('p', {
+            alias: 'port',
+            default: 3000,
+            describe: 'The local post number to listen on'
+        })
+        .options('r', {
+            alias: 'rewrite',
+            describe: 'Rewrite rules on the form "regexp:replacement"'
+        })
         .argv,
     publicDir = path.normalize(commandLineOptions._[0] || process.cwd());
 
@@ -32,7 +46,7 @@ app.configure(function () {
     require('../lib/installLiveCssFileWatcherInServer')(app, publicDir, require('socket.io'));
 });
 
-app.listen(commandLineOptions.port, commandLineOptions.host);
+app.listen(commandLineOptions.p, commandLineOptions.l);
 
 console.log('Serving static files from ' + publicDir);
-console.log('Listening to http://' + commandLineOptions.host + ':' + commandLineOptions.port + '/');
+console.log('Listening to http://' + commandLineOptions.l + ':' + commandLineOptions.p + '/');
