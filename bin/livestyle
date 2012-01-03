@@ -41,7 +41,7 @@ var express = require('express'),
             }
         })
         .argv,
-    publicDir = path.normalize(commandLineOptions._[0] || process.cwd());
+    documentRoot = path.normalize(commandLineOptions._[0] || process.cwd());
 
 if (commandLineOptions.help) {
     optimist.showHelp();
@@ -52,16 +52,16 @@ app.configure(function () {
     app
         .use(express.logger())
         .use(require('../lib/middleware/injectLiveStyleScriptIncludeIntoHtml')())
-        .use(express['static'](publicDir))
+        .use(express['static'](documentRoot))
         .use(express.errorHandler({dumpExceptions: true, showStack: true}));
 
     require('../lib/installLiveCssFileWatcherInServer')(app, {
         mappings: mappings,
-        publicDir: publicDir
+        documentRoot: documentRoot
     }, require('socket.io'));
 });
 
 app.listen(commandLineOptions.port, commandLineOptions.host);
 
-console.log('Serving static files from ' + publicDir);
+console.log('Serving static files from ' + documentRoot);
 console.log('Listening to http://' + commandLineOptions.host + ':' + commandLineOptions.port + '/');
