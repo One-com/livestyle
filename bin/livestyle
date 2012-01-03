@@ -67,7 +67,7 @@ app.configure(function () {
         .use(function (req, res, next) {
             Object.keys(mappings).forEach(function (url) {
                 if (req.url.indexOf(url) === 0) {
-                    console.log("rewriting ", req.url, "to", req.url.replace(url, mappings[url]));
+                    console.log("Rewriting " + req.url + " to " + req.url.replace(url, mappings[url]));
                     req.url = req.url.replace(url, mappings[url]);
                 }
             });
@@ -75,8 +75,15 @@ app.configure(function () {
         });
 
     if (documentRoot) {
-        console.log('Serving static files from ' + documentRoot);
-        app.use(express['static'](documentRoot));
+        console.log('Serving static CSS files from ' + documentRoot);
+        var staticProvider = express['static'](documentRoot);
+        app.use(function (req, res, next) {
+            if (!commandLineOptions.proxy || req.accepts('css') || req.accepts('text/x-less')) {
+                staticProvider(req, res, next);
+            } else {
+                next();
+            }
+        });
     }
 
     if (commandLineOptions.proxy) {
