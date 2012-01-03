@@ -26,7 +26,7 @@
         findCssIncludes = function () {
             var cssIncludes = [],
                 links = document.getElementsByTagName('link'),
-                styles = document.getElementsByTagName('link'),
+                styles = document.getElementsByTagName('style'),
                 style,
                 cssRule,
                 i,
@@ -46,14 +46,14 @@
 
                 if (typeof StyleFix !== 'undefined') {
                     // Prefixfree support
-                    href = cleanHref(style.href || style.getAttribute('data-href'));
+                    href = style.href || style.getAttribute('data-href');
 
                     if (href) {
-                        cssIncludes.push({type: 'prefixfree', href: href, node: style});
+                        cssIncludes.push({type: 'prefixfree', href: cleanHref(href), node: style});
                     }
                 }
 
-                style.innerHTML.replace(/@import\s+(?:'([^']+)'|"([^"]+)"|url\(([^\)]+)\))/, function ($0, singleQuotedHref, doubleQuotedHref, urlParenthesesHref) {
+                style.innerHTML.replace(/@import\s+(?:'([^']+)'|"([^"]+)"|url\(([^\)]+)\))/g, function ($0, singleQuotedHref, doubleQuotedHref, urlParenthesesHref) {
                     if (urlParenthesesHref) {
                         urlParenthesesHref = urlParenthesesHref.replace(/^(['"])(.*)\1$/, '$2');
                     }
@@ -76,25 +76,36 @@
                 monitor;
 
             newNode.href = href;
+            newNode.onload = function () {
+                if (node.parentNode) {
+                    parent.removeChild(node);
 
-            parent.insertBefore(newNode, node);
+                    clearInterval(monitor);
+                }
+            };
 
             monitor = setInterval(function () {
                 try {
                     if (newNode.sheet && newNode.sheet.cssRules.length > 0) { // Throws an error if the stylesheet hasn't loaded
-                        clearInterval(monitor);
-                        parent.removeChild(node);
-
-                        // Less.js support (https://github.com/cloudhead/less.js)
-                        if (/\bstylesheet\/less\b/i.test(newNode.getAttribute('rel')) && typeof less !== 'undefined') {
-                            // Sadly this method isn't accessible
-                            // less.loadStyleSheet(cssInclude.node, function () {}, false, 0);
-                            // So instead we'll just have to brutally refresh ALL less includes
-                            less.refresh();
-                        }
+                        newNode.onload();
                     }
                 } catch (err) {}
-            }, 50);
+            }, 20);
+
+            if (node.nextSibling) {
+                parent.insertBefore(newNode, node.nextSibling);
+            } else {
+                parent.appendChild(newNode);
+            }
+        },
+        replaceStyleTag = function (node, oldHref, newHref) {
+            var parent = node.parentNode,
+                newNode = node.cloneNode(),
+                replacerRegexp = new RegExp("@import\\s+url\\([\"']?" + oldHref.replace(/[\?\[\]\(\)\{\}]/g, "\\$&") + "[\"']?\\)");
+
+            newNode.textContent = node.textContent.replace(replacerRegexp, '@import url(\'' + newHref + '\')');
+            parent.insertBefore(newNode, node);
+            parent.removeChild(node);
         },
         refresh = function (href) {
             var cssIncludes = findCssIncludes(),
@@ -112,12 +123,19 @@
                     newHref = addCacheBuster(href);
 
                     if (cssInclude.type === 'link') {
-                        replaceLinkTag(cssInclude.node, newHref);
+                        // Less.js support (https://github.com/cloudhead/less.js)
+                        if (/\bstylesheet\/less\b/i.test(cssInclude.node.getAttribute('rel')) && typeof less !== 'undefined') {
+                            // Sadly this method isn't accessible
+                            // less.loadStyleSheet(cssInclude.node, function () {}, false, 0);
+                            // So instead we'll just have to brutally refresh ALL less includes
+                            less.refresh();
+                        } else {
+                            replaceLinkTag(cssInclude.node, newHref);
+                        }
                     }
 
                     if (cssInclude.type === 'import') {
-                        replacerRegExp = new RegExp("@import\\s+url\\(" + cssInclude.href.replace(/[\?\[\]\(\)\{\}]/g, "\\$&") + "\\)");
-                        cssInclude.styleElement.innerHTML = cssInclude.styleElement.innerHTML.replace(replacerRegExp, '@import url(' + newHref + ')');
+                        replaceStyleTag(cssInclude.styleElement, cssInclude.href, newHref);
                     }
 
                     if (cssInclude.type === 'prefixfree') {
