@@ -26,10 +26,10 @@
         findCssIncludes = function () {
             var cssIncludes = [],
                 links = document.getElementsByTagName('link'),
-                styleSheet,
+                styles = document.getElementsByTagName('link'),
+                style,
                 cssRule,
                 i,
-                j,
                 href;
 
             for (i = 0; i < links.length; i += 1) {
@@ -41,27 +41,25 @@
                 }
             }
 
-            for (i = 0; i < document.styleSheets.length; i += 1) {
-                styleSheet = document.styleSheets[i];
+            for (i = 0 ; i < styles.length ; i += 1) {
+                style = styles[i];
 
                 if (typeof StyleFix !== 'undefined') {
                     // Prefixfree support
-                    href = cleanHref(styleSheet.ownerNode.href || styleSheet.ownerNode.getAttribute('data-href'));
+                    href = cleanHref(style.href || style.getAttribute('data-href'));
 
                     if (href) {
-                        cssIncludes.push({type: 'prefixfree', href: href, node: styleSheet.ownerNode});
+                        cssIncludes.push({type: 'prefixfree', href: href, node: style});
                     }
                 }
 
-                if (styleSheet.cssRules) { // Not present in IE?
-                    for (j = 0; j < styleSheet.cssRules.length; j += 1) {
-                        cssRule = styleSheet.cssRules[j];
-                        if (cssRule.type === 3) { // CSSImportRule
-                            href = cleanHref(cssRule.href);
-                            cssIncludes.push({type: 'import', href: href, node: cssRule, styleElement: styleSheet.ownerNode});
-                        }
+                style.innerHTML.replace(/@import\s+(?:'([^']+)'|"([^"]+)"|url\(([^\)]+)\))/, function ($0, singleQuotedHref, doubleQuotedHref, urlParenthesesHref) {
+                    if (urlParenthesesHref) {
+                        urlParenthesesHref = urlParenthesesHref.replace(/^(['"])(.*)\1$/, '$2');
                     }
-                }
+                    var href = singleQuotedHref || doubleQuotedHref || urlParenthesesHref;
+                    cssIncludes.push({type: 'import', href: href, styleElement: style});
+                });
             }
 
             return cssIncludes;
