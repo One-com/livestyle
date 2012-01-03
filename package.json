@@ -23,6 +23,7 @@
     "dependencies": {
         "express": "= 2.5.2",
         "optimist": "= 0.3.0",
+        "request": "= 2.9.3",
         "socket.io": "= 0.8.7",
         "socket.io-client": "= 0.8.7"
     },

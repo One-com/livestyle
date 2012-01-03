@@ -6,10 +6,17 @@ var express = require('express'),
     util = require('util'),
     fs = require('fs'),
     path = require('path'),
+    URL = require('url'),
+    request = require('request'),
     app = express.createServer(),
+    mappings = {},
     optimist = require('optimist'),
     commandLineOptions = optimist
         .usage('Usage: $0 [--proxy <remotehost> [-m <directoryMapping>]] [-h <hostname>] [-p <port>] documentRoot')
+        .options('root', {
+            alias: 'r',
+            describe: 'The directory to serve static files from. Defaults to the current working directory unless --proxy is specified.'
+        })
         .options('proxy', {
             describe: 'The remote host:port to serve non-CSS files from'
         })
@@ -40,7 +47,13 @@ var express = require('express'),
             }
         })
         .argv,
-    documentRoot = path.normalize(commandLineOptions._[0] || process.cwd());
+        documentRoot;
+
+if (commandLineOptions.root) {
+    documentRoot = path.resolve(process.cwd(), commandLineOptions.root);
+} else if (!commandLineOptions.proxy) {
+    documentRoot = process.cwd();
+}
 
 if (commandLineOptions.help) {
     optimist.showHelp();
@@ -51,16 +64,43 @@ app.configure(function () {
     app
         .use(express.logger())
         .use(require('../lib/middleware/injectLiveStyleScriptIncludeIntoHtml')())
-        .use(express['static'](documentRoot))
-        .use(express.errorHandler({dumpExceptions: true, showStack: true}));
+        .use(function (req, res, next) {
+            Object.keys(mappings).forEach(function (url) {
+                if (req.url.indexOf(url) === 0) {
+                    console.log("rewriting ", req.url, "to", req.url.replace(url, mappings[url]));
+                    req.url = req.url.replace(url, mappings[url]);
+                }
+            });
+            next();
+        });
+
+    if (documentRoot) {
+        console.log('Serving static files from ' + documentRoot);
+        app.use(express['static'](documentRoot));
+    }
+
+    if (commandLineOptions.proxy) {
+        var proxyUrl = URL.parse(commandLineOptions.proxy);
+        console.log('Proxying to ' + proxyUrl.protocol + '//' + proxyUrl.host + '/');
+        app.use(function (req, res, next) {
+            request({
+                method: req.method,
+                url: proxyUrl.protocol + '//' + proxyUrl.host + req.url,
+                onResponse: true
+            }, function (err, response) {
+                res.writeHead(response.statusCode, response.headers);
+                response.pipe(res);
+            });
+        });
+    }
+
+    app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
 
     require('../lib/installLiveCssFileWatcherInServer')(app, {
-        mappings: mappings,
         documentRoot: documentRoot
     }, require('socket.io'));
 });
 
 app.listen(commandLineOptions.port, commandLineOptions.host);
 
-console.log('Serving static files from ' + documentRoot);
 console.log('Listening to http://' + commandLineOptions.host + ':' + commandLineOptions.port + '/');
