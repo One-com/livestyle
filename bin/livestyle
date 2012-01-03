@@ -97,7 +97,8 @@ app.configure(function () {
     app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
 
     require('../lib/installLiveCssFileWatcherInServer')(app, {
-        documentRoot: documentRoot
+        documentRoot: documentRoot,
+        mappings: mappings
     }, require('socket.io'));
 });
 
