@@ -115,6 +115,10 @@
                 newHref,
                 replacerRegExp;
 
+            if (href === location.pathname) {
+                location.reload(true);
+            }
+
             for (i = 0; i < cssIncludes.length; i += 1) {
                 cssInclude = cssIncludes[i];
                 cssIncludeHref = removeCacheBuster(cssInclude.href);
@@ -155,7 +159,7 @@
             var socket = io.connect();
 
             socket.on('connect', function () {
-                var hrefs = [],
+                var hrefs = [location.pathname],
                     watchNewStylesheets = function () {
                         var cssIncludes = findCssIncludes(),
                             toWatch = [],
@@ -242,7 +246,7 @@
                         setTimeout(startPolling, pollTimeout);
                     }
                 };
-
+            cssIncludes.unshift({ href: location.pathname });
             proceed();
         };
 
