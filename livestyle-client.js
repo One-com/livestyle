@@ -115,7 +115,7 @@
                 newHref,
                 replacerRegExp;
 
-            if (href === location.pathname) {
+            if (href === location.pathname.substr(1)) {
                 location.reload(true);
             }
 
@@ -159,12 +159,13 @@
             var socket = io.connect();
 
             socket.on('connect', function () {
-                var hrefs = [location.pathname],
+                var hrefs = [],
                     watchNewStylesheets = function () {
                         var cssIncludes = findCssIncludes(),
                             toWatch = [],
                             url,
                             i;
+                        cssIncludes.unshift({ href: location.pathname });
 
                         for (i = 0; i < cssIncludes.length; i += 1) {
                             url = removeCacheBuster(cssIncludes[i].href);
