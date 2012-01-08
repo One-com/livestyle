@@ -4,11 +4,7 @@
 /*global require, __dirname */
 var express = require('express'),
     util = require('util'),
-    fs = require('fs'),
     path = require('path'),
-    URL = require('url'),
-    request = require('request'),
-    app = express.createServer(),
     mappings = {},
     optimist = require('optimist'),
     commandLineOptions = optimist
@@ -60,55 +56,18 @@ if (commandLineOptions.help) {
     process.exit();
 }
 
-app.configure(function () {
-    app
-        .use(express.logger())
-        .use(require('../lib/middleware/injectLiveStyleScriptIncludeIntoHtml')())
-        .use(function (req, res, next) {
-            Object.keys(mappings).forEach(function (url) {
-                if (req.url.indexOf(url) === 0) {
-                    console.log("Rewriting " + req.url + " to " + req.url.replace(url, mappings[url]));
-                    req.url = req.url.replace(url, mappings[url]);
-                }
-            });
-            next();
-        });
+if (documentRoot) {
+    console.log('Serving static CSS files from ' + documentRoot);
+}
 
-    if (documentRoot) {
-        console.log('Serving static CSS files from ' + documentRoot);
-        var staticProvider = express['static'](documentRoot);
-        app.use(function (req, res, next) {
-            if (!commandLineOptions.proxy || req.accepts('css') || req.accepts('text/x-less')) {
-                staticProvider(req, res, next);
-            } else {
-                next();
-            }
-        });
-    }
-
-    if (commandLineOptions.proxy) {
-        var proxyUrl = URL.parse(commandLineOptions.proxy);
-        console.log('Proxying to ' + proxyUrl.protocol + '//' + proxyUrl.host + '/');
-        app.use(function (req, res, next) {
-            request({
-                method: req.method,
-                url: proxyUrl.protocol + '//' + proxyUrl.host + req.url,
-                onResponse: true
-            }, function (err, response) {
-                res.writeHead(response.statusCode, response.headers);
-                response.pipe(res);
-            });
-        });
-    }
-
-    app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
-
-    require('../lib/installLiveCssFileWatcherInServer')(app, {
-        documentRoot: documentRoot,
-        mappings: mappings
-    }, require('socket.io'));
-});
-
-app.listen(commandLineOptions.port, commandLineOptions.host);
+if (commandLineOptions.proxy) {
+    console.log('Proxying to ' + commandLineOptions.proxy);
+}
 
 console.log('Listening to http://' + commandLineOptions.host + ':' + commandLineOptions.port + '/');
+
+require('../lib/app')({
+    documentRoot: documentRoot,
+    mappings: mappings,
+    proxy: commandLineOptions.proxy || null
+}).listen(commandLineOptions.port, commandLineOptions.host);
