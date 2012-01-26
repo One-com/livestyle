@@ -1,26 +1,10 @@
 var fs = require('fs'),
     vows = require('vows'),
     assert = require('assert'),
-    express = require('express'),
     path = require('path'),
     request = require('request'),
     ioClient = require('socket.io-client'),
-    createLiveStyleApp = require('../lib/createLiveStyleApp');
-
-function createTestServer(options) {
-    var app = createLiveStyleApp(options);
-
-    // Listen on a vacant TCP port and hand back the url + app
-    app.listen(0);
-    var address = app.address();
-    return {
-        hostname: address.address,
-        port: address.port,
-        host: address.address + ':' + address.port,
-        url: 'http://' + address.address + ':' + address.port,
-        app: app
-    };
-};
+    createLiveStyleTestServer = require('./createLiveStyleTestServer');
 
 function getRandomColor() {
     return '#' + (0x100000 + Math.floor(0xefffff * Math.random())).toString(16);
@@ -30,7 +14,7 @@ vows.describe('foo').addBatch({
     'create a livestyle server in non-proxy mode, subscribe to changes in styles.css, then overwrite it': {
         topic: function () {
             var callback = this.callback,
-                appInfo = createTestServer({documentRoot: path.resolve(__dirname, 'nonProxy')}),
+                appInfo = createLiveStyleTestServer({documentRoot: path.resolve(__dirname, 'nonProxy')}),
                 cssFileName = path.resolve(__dirname, 'nonProxy/styles.css'),
                 changedFileNames = [];
 
