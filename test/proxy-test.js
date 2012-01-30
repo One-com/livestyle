@@ -28,7 +28,7 @@ vows.describe('foo').addBatch({
 
             // Wait a couple of seconds for the servers to become available
             setTimeout(function () {
-                request({method: 'GET', url: upstreamServerUrl}, callback);
+                request({method: 'GET', url: 'http://127.0.0.1:' + appInfo.port + '/'}, callback);
             }, 2000);
         },
         'the HTML file should be patched with the bootstrapper': function (err, response, body) {
