@@ -8,7 +8,7 @@ var express = require('express'),
     mappings = {},
     optimist = require('optimist'),
     commandLineOptions = optimist
-        .usage('Usage: $0 [--proxy <remotehost> [-m <directoryMapping>]] [-h <hostname>] [-p <port>] documentRoot')
+        .usage('Usage: $0 [--proxy <remotehost> [-m <directoryMapping>]] [-h <hostname>] [-p <port>] [-r documentRoot]')
         .options('root', {
             alias: 'r',
             describe: 'The directory to serve static files from. Defaults to the current working directory unless --proxy is specified.'
