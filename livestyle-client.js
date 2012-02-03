@@ -19,7 +19,8 @@
             var local = new RegExp('^' + document.location.protocol + '//' + document.location.host.replace(/[\.]/g, '\\$0') + '/', 'i'),
                 remote = /:\/\/|^\/\//;
 
-            href = href.replace(local, '');
+            // Normalize all hrefs to be root relative
+            href = '/' + href.replace(local, '').replace(/^\//, '');
 
             return !remote.test(href) && href;
         },
@@ -32,6 +33,7 @@
                 i,
                 href;
 
+            // Link tags with rel="stylesheet"
             for (i = 0; i < links.length; i += 1) {
                 if (/\bstylesheet\b/i.test(links[i].getAttribute('rel'))) {
                     href = cleanHref(links[i].getAttribute('href'));
@@ -41,6 +43,7 @@
                 }
             }
 
+            // Style tags: @includes and inline prefixfree blocks
             for (i = 0 ; i < styles.length ; i += 1) {
                 style = styles[i];
 
@@ -53,6 +56,7 @@
                     }
                 }
 
+                // @import
                 style.innerHTML.replace(/@import\s+(?:'([^']+)'|"([^"]+)"|url\(([^\)]+)\))/g, function ($0, singleQuotedHref, doubleQuotedHref, urlParenthesesHref) {
                     if (urlParenthesesHref) {
                         urlParenthesesHref = urlParenthesesHref.replace(/^(['"])(.*)\1$/, '$2');
@@ -70,6 +74,9 @@
         addCacheBuster = function (href) {
             return href + (href.indexOf('?') === -1 ? '?' : '&') + 'livestyle=' + new Date().getTime();
         },
+
+        // Replaces a link tag with an updated version. Just replacing the href would cause FOUC.
+        // We insert the new node before the old one and remove the old one after the new one has loaded.
         replaceLinkTag = function (node, href) {
             var parent = node.parentNode,
                 newNode = node.cloneNode(true),
@@ -115,7 +122,7 @@
                 newHref,
                 replacerRegExp;
 
-            if (href === location.pathname.substr(1)) {
+            if (href === location.pathname) {
                 location.reload(true);
             }
 
