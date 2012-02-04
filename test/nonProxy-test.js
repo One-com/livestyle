@@ -46,5 +46,26 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
         'styles.css should be in the list of changed file names': function (changedFileNames) {
             assert.deepEqual(changedFileNames, ['/styles.css']);
         }
+    },
+    'create a livestyle server in non-proxy mode with a mapping from /foo/ to /bar/, then request /foo/hello.txt': {
+        topic: function () {
+            var callback = this.callback,
+                appInfo = createLiveStyleTestServer({
+                    documentRoot: path.resolve(__dirname, 'nonProxy'),
+                    mappings: {
+                        '/foo/': '/bar/'
+                    }
+                });
+
+            // Wait a couple of seconds for the server to become available
+            setTimeout(function () {
+                request('http://127.0.0.1:' + appInfo.port + '/foo/hello.txt', callback);
+            }, 2000);
+        },
+        'The contents of /bar/hello.txt should be returned': function (err, response, body) {
+            assert.isNull(err);
+            assert.equal(response.statusCode, 200);
+            assert.equal(body, 'The contents of /bar/hello.txt\n');
+        }
     }
 })['export'](module);
