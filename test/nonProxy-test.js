@@ -10,7 +10,7 @@ function getRandomColor() {
     return '#' + (0x100000 + Math.floor(0xefffff * Math.random())).toString(16);
 }
 
-vows.describe('foo').addBatch({
+vows.describe('livestyle server in non-proxy mode').addBatch({
     'create a livestyle server in non-proxy mode, subscribe to changes in styles.css, then overwrite it': {
         topic: function () {
             var callback = this.callback,
@@ -23,7 +23,7 @@ vows.describe('foo').addBatch({
                 var socket = ioClient.connect('http://localhost:' + appInfo.port);
 
                 socket.on('connect', function () {
-                    socket.emit('watch', ['styles.css'], '/');
+                    socket.emit('watch', ['/styles.css']);
                     socket.on('change', function (fileName) {
                         changedFileNames.push(fileName);
                     });
@@ -44,7 +44,7 @@ vows.describe('foo').addBatch({
             }, 2000);
         },
         'styles.css should be in the list of changed file names': function (changedFileNames) {
-            assert.deepEqual(changedFileNames, ['styles.css']);
+            assert.deepEqual(changedFileNames, ['/styles.css']);
         }
     }
 })['export'](module);
