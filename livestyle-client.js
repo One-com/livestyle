@@ -183,7 +183,7 @@
                         }
 
                         if (toWatch.length !== 0) {
-                            socket.emit('watch', toWatch, location.href);
+                            socket.emit('watch', toWatch);
                         }
                     };
 
