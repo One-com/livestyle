@@ -20,7 +20,7 @@
                 remote = /:\/\/|^\/\//;
 
             // Normalize all hrefs to be root relative
-            href = '/' + href.replace(local, '').replace(/^\//, '');
+            href = '/' + href.replace(local, '').replace(/^\//, '').replace(/\?.*$/, '');
 
             return !remote.test(href) && href;
         },
