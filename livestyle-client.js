@@ -16,7 +16,7 @@
 
     var pollTimeout = 2000,
         cleanHref = function (href) {
-            var local = new RegExp('^' + document.location.protocol + '//' + document.location.host.replace(/[\.]/g, '\\$0') + '/', 'i'),
+            var local = new RegExp('^' + document.location.protocol + '//' + document.location.host.replace(/[\.]/g, '\\$0') + '(:\\d+)?/', 'i'),
                 remote = /:\/\/|^\/\//;
 
             // Normalize all hrefs to be root relative
