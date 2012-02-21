@@ -56,12 +56,13 @@ if (commandLineOptions.help) {
     process.exit();
 }
 
-if (documentRoot) {
-    console.log('Serving static CSS files from ' + documentRoot);
-}
-
 if (commandLineOptions.proxy) {
     console.log('Proxying to ' + commandLineOptions.proxy);
+    if (documentRoot) {
+        console.log('Serving static CSS files from ' + documentRoot);
+    }
+} else if (documentRoot) {
+    console.log('Serving static files from ' + documentRoot);
 }
 
 console.log('Listening to http://' + commandLineOptions.host + ':' + commandLineOptions.port + '/');
