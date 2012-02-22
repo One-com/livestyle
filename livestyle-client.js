@@ -2,6 +2,8 @@
 (function () {
     'use strict';
 
+    var liveStyleOptions = {};
+
     if (!Array.prototype.indexOf) {
         Array.prototype.indexOf = function (o, from) {
             var i;
@@ -15,8 +17,14 @@
     }
 
     var pollTimeout = 2000,
+        escapeRegExp = function (str) {
+            return str.replace(/[\.\+\*\{\}\[\]\(\)\?\^\$]/g, '\\$&');
+        },
         cleanHref = function (href) {
-            var local = new RegExp('^' + document.location.protocol + '//' + document.location.host.replace(/[\.]/g, '\\$0') + '(:\\d+)?/', 'i'),
+            var local = new RegExp(
+                '^' + escapeRegExp(document.location.protocol + '//' + document.location.host + (document.location.port ? ':' + document.location.port : '')) + '/' +
+                (liveStyleOptions.proxy ? '|^' + escapeRegExp(liveStyleOptions.proxy) : ''),
+                'i'),
                 remote = /:\/\/|^\/\//;
 
             // Normalize all hrefs to be root relative
