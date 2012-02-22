@@ -27,6 +27,11 @@
                 'i'),
                 remote = /:\/\/|^\/\//;
 
+            if (/^data:/.test(href)) {
+                // AdBlock for Chrome injects these
+                return false;
+            }
+
             // Normalize all hrefs to be root relative
             href = '/' + href.replace(local, '').replace(/^\//, '').replace(/\?.*$/, '');
 
