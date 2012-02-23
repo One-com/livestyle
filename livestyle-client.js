@@ -2,7 +2,13 @@
 (function () {
     'use strict';
 
-    var liveStyleOptions = {};
+    var liveStyleOptions = {}; // The options will be injected by the server
+
+    function log() { // ...
+        if (liveStyleOptions.debug && window.console) {
+            console.log.apply(console, arguments);
+        }
+    }
 
     if (!Array.prototype.indexOf) {
         Array.prototype.indexOf = function (o, from) {
@@ -196,13 +202,17 @@
                         }
 
                         if (toWatch.length !== 0) {
+                            log('Subscribing to ' + toWatch.length + ' files:\n  ' + toWatch.join('\n  '));
                             socket.emit('watch', toWatch);
                         }
                     };
 
                 watchNewStylesheets();
                 setInterval(watchNewStylesheets, pollTimeout);
-            }).on('change', refresh);
+            }).on('change', function (url) {
+                log('Received change notification for ' + url + ', refreshing');
+                refresh(url);
+            });
         },
         state = {},
         startPolling = function () {
@@ -272,8 +282,10 @@
         };
 
     if (typeof io !== 'undefined') {
+        log('socket.io present, connecting');
         startListening();
     } else {
+        log('socket.io not present, falling back to polling mode');
         startPolling();
     }
 }());

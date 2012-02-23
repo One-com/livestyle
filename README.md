@@ -64,6 +64,11 @@ switch: `--map /foo/=/bar/`
 Multiple --map switches are allowed. When used in conjunction with
 `--proxy`, the mappings are applied before proxying the request.
 
+#### --debug|-d
+
+Outputs a bunch of debugging information on both the server and the
+client.
+
 
 Installing livestyle
 ====================

@@ -8,10 +8,15 @@ var express = require('express'),
     mappings = {},
     optimist = require('optimist'),
     commandLineOptions = optimist
-        .usage('Usage: $0 [--proxy <remotehost> [-m <directoryMapping>]] [-h <hostname>] [-p <port>] [-r documentRoot]')
+        .usage('Usage: $0 [--proxy <remotehost> [-m <directoryMapping>]] [-d] [-h <hostname>] [-p <port>] [-r documentRoot]')
+        .boolean('d')
         .options('root', {
             alias: 'r',
             describe: 'The directory to serve static files from. Defaults to the current working directory unless --proxy is specified.'
+        })
+        .options('debug', {
+            alias: 'd',
+            describe: 'Turn on debug mode (server logs events to stderr, client logs to console).'
         })
         .options('proxy', {
             describe: 'The remote host:port to serve non-CSS files from'
@@ -68,6 +73,7 @@ if (commandLineOptions.proxy) {
 console.log('Listening to http://' + commandLineOptions.host + ':' + commandLineOptions.port + '/');
 
 require('../lib/createLiveStyleApp')({
+    debug: commandLineOptions.debug,
     documentRoot: documentRoot,
     mappings: mappings,
     proxy: commandLineOptions.proxy || null
