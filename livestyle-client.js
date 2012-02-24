@@ -191,7 +191,7 @@
                             toWatch = [],
                             url,
                             i;
-                        cssIncludes.unshift({ href: location.pathname });
+                        //cssIncludes.unshift({ href: location.pathname }); // See https://github.com/One-com/livestyle/issues/11
 
                         for (i = 0; i < cssIncludes.length; i += 1) {
                             url = removeCacheBuster(cssIncludes[i].href);
@@ -277,7 +277,7 @@
                         setTimeout(startPolling, pollTimeout);
                     }
                 };
-            cssIncludes.unshift({ href: location.pathname });
+            //cssIncludes.unshift({ href: location.pathname }); // See https://github.com/One-com/livestyle/issues/11
             proceed();
         };
 
