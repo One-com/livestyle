@@ -101,8 +101,10 @@
                 newNode = node.cloneNode(true),
                 monitor;
 
+            parent.busy = node.busy = true;
             newNode.href = href;
             newNode.onload = function () {
+                newNode.busy = false;
                 if (node.parentNode) {
                     parent.removeChild(node);
 
@@ -150,6 +152,13 @@
                 cssIncludeHref = removeCacheBuster(cssInclude.href);
 
                 if (cssIncludeHref === href) {
+                    if (cssInclude.node.busy) {
+                        if (liveStyleOptions.debug) {
+                            log("Ignoring 'change' notification on stylesheet that's already being refreshed: " + href);
+                        }
+                        break;
+                    }
+
                     newHref = addCacheBuster(href);
 
                     if (cssInclude.type === 'link') {
