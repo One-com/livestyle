@@ -32,19 +32,21 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
                     setTimeout(function () {
                         fs.writeFileSync(cssFileName, 'body {\n    background-color: ' + getRandomColor() + ';\n}\n', 'utf-8');
 
-                        // Wait another second, then report the changed files to the callback:
+                        // Wait another second, then reset the file to its original contents:
                         setTimeout(function () {
-                            callback(null, changedFileNames);
-
-                            // Poor man's teardown: Reset the file to its original contents:
-                            fs.writeFileSync(cssFileName, 'body {\n    background-color: red;\n}\n', 'utf-8');
+                            fs.writeFile(cssFileName, 'body {\n    background-color: red;\n}\n', 'utf-8', function () {
+                                // Wait another second and report back to the callback:
+                                setTimeout(function () {
+                                    callback(null, changedFileNames);
+                                }, 1000);
+                            });
                         }, 1000);
                     }, 1000);
                 });
             }, 2000);
         },
-        'styles.css should be in the list of changed file names': function (changedFileNames) {
-            assert.deepEqual(changedFileNames, ['/styles.css']);
+        'the list of changed file names should contain styles.css twice': function (changedFileNames) {
+            assert.deepEqual(changedFileNames, ['/styles.css', '/styles.css']);
         }
     },
     'create a livestyle server in non-proxy mode with a mapping from /foo/ to /bar/, then request /foo/hello.txt': {
