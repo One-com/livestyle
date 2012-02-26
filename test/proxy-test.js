@@ -36,6 +36,43 @@ vows.describe('foo').addBatch({
             assert.matches(body, /socket\.io/);
         }
     },
+    'create a livestyle server in pure proxy mode and an upstream server that redirects /subdir to /subdir/, then request a directory': {
+        topic: function () {
+            var callback = this.callback,
+                documentRoot = path.resolve(__dirname, 'proxy'),
+                upstreamServerUrl,
+                upstreamServer = express.createServer()
+                    .use(function (req, res, next) {
+                        if (req.url === '/subdir') {
+                            res.writeHead(301, {
+                                location: upstreamServerUrl + 'subdir/'
+                            });
+                            res.end('The upstream server at ' + upstreamServerUrl + ' says redirect!');
+                        } else {
+                            res.send(400);
+                        }
+                    });
+
+            upstreamServer.listen(0);
+
+            upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/';
+
+            var appInfo = createLiveStyleTestServer({proxy: upstreamServerUrl});
+
+            // Wait a couple of seconds for the servers to become available
+            setTimeout(function () {
+                request({method: 'GET', followRedirect: false, url: 'http://127.0.0.1:' + appInfo.port + '/subdir'}, function (err, response, body) {
+                    callback(err, response, body, appInfo);
+                });
+            }, 2000);
+        },
+        'the response should be an 301 pointing at /subdir/ on the LiveStyle server': function (err, response, body, appInfo) {
+            assert.isNull(err);
+            assert.equal(response.statusCode, 301);
+            // Accept both and absolute and a relative Location header:
+            assert.matches(response.headers.location, /^(?:http:\/\/127\.0\.0\.1:' + appInfo.port + ')?\/subdir\//);
+        }
+    },
     'create a livestyle server with a mapping from /foo/ to /bar/ along with an upstream server, then request /foo/hello.txt': {
         topic: function () {
             var callback = this.callback,
