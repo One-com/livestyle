@@ -101,6 +101,14 @@
                 newNode = node.cloneNode(true),
                 monitor;
 
+            // The node must be added to the document before the href is set, otherwise IE9 won't
+            // apply the styles.
+            if (node.nextSibling) {
+                parent.insertBefore(newNode, node.nextSibling);
+            } else {
+                parent.appendChild(newNode);
+            }
+
             parent.busy = node.busy = true;
             newNode.href = href;
             newNode.onload = function () {
@@ -119,12 +127,6 @@
                     }
                 } catch (err) {}
             }, 20);
-
-            if (node.nextSibling) {
-                parent.insertBefore(newNode, node.nextSibling);
-            } else {
-                parent.appendChild(newNode);
-            }
         },
         replaceStyleTag = function (node, oldHref, newHref) {
             var parent = node.parentNode,
