@@ -4,9 +4,9 @@
 
     var liveStyleOptions = {}; // The options will be injected by the server
 
-    function log() { // ...
+    function log(msg) {
         if (liveStyleOptions.debug && window.console) {
-            console.log.apply(console, arguments);
+            console.log(msg);
         }
     }
 
