@@ -21,6 +21,7 @@
         "node": ">= 0.4.0"
     },
     "dependencies": {
+        "bufferjs": "= 1.0.2",
         "express": "= 2.5.2",
         "optimist": "= 0.3.0",
         "request": "= 2.9.3",

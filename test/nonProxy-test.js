@@ -11,6 +11,24 @@ function getRandomColor() {
 }
 
 vows.describe('livestyle server in non-proxy mode').addBatch({
+    'create a livestyle server in non-proxy mode, then request an HTML file': {
+        topic: function () {
+            var callback = this.callback,
+                appInfo = createLiveStyleTestServer({documentRoot: path.resolve(__dirname, 'nonProxy')});
+
+            // Wait a couple of seconds for the server to become available
+            setTimeout(function () {
+                request('http://127.0.0.1:' + appInfo.port + '/', callback);
+            }, 2000);
+        },
+        'An HTML response with the LiveStyle client should be returned': function (err, response, body) {
+            assert.isNull(err);
+            assert.equal(response.statusCode, 200);
+            assert.matches(response.headers['content-type'], /^text\/html[; ]/);
+            assert.matches(body, /<\/script><\/head>/);
+        }
+    },
+
     'create a livestyle server in non-proxy mode, subscribe to changes in styles.css, then overwrite it': {
         topic: function () {
             var callback = this.callback,

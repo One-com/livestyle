@@ -31,9 +31,57 @@ vows.describe('foo').addBatch({
                 request({method: 'GET', url: 'http://127.0.0.1:' + appInfo.port + '/'}, callback);
             }, 2000);
         },
-        'the HTML file should be patched with the bootstrapper': function (err, response, body) {
+        'the HTML file should be patched with the bootstrapper right before </head>': function (err, response, body) {
             assert.isNull(err);
-            assert.matches(body, /socket\.io/);
+            assert.matches(body, /<\/script><\/head>/);
+        }
+    },
+    'create a livestyle server in pure proxy mode and an upstream server, then request an HTML file with no </head>': {
+        topic: function () {
+            var callback = this.callback,
+                documentRoot = path.resolve(__dirname, 'proxy'),
+                upstreamServer = express.createServer()
+                    .use(express['static'](documentRoot));
+
+            upstreamServer.listen(0);
+
+            var upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/',
+                appInfo = createLiveStyleTestServer({
+                    proxy: upstreamServerUrl
+                });
+
+            // Wait a couple of seconds for the servers to become available
+            setTimeout(function () {
+                request({method: 'GET', url: 'http://127.0.0.1:' + appInfo.port + '/nohead.html'}, callback);
+            }, 2000);
+        },
+        'the HTML file should be patched with the bootstrapper right before </html>': function (err, response, body) {
+            assert.isNull(err);
+            assert.matches(body, /<\/script><\/html>/);
+        }
+    },
+    'create a livestyle server in pure proxy mode and an upstream server, then request an HTML file with no </head> and no </html>': {
+        topic: function () {
+            var callback = this.callback,
+                documentRoot = path.resolve(__dirname, 'proxy'),
+                upstreamServer = express.createServer()
+                    .use(express['static'](documentRoot));
+
+            upstreamServer.listen(0);
+
+            var upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/',
+                appInfo = createLiveStyleTestServer({
+                    proxy: upstreamServerUrl
+                });
+
+            // Wait a couple of seconds for the servers to become available
+            setTimeout(function () {
+                request({method: 'GET', url: 'http://127.0.0.1:' + appInfo.port + '/noheadnoendhtml.html'}, callback);
+            }, 2000);
+        },
+        'the HTML file should be patched with the bootstrapper at the end': function (err, response, body) {
+            assert.isNull(err);
+            assert.matches(body, /<\/script>$/);
         }
     },
     'create a livestyle server in pure proxy mode and an upstream server that redirects /subdir to /subdir/, then request a directory': {
