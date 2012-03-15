@@ -69,6 +69,11 @@ Multiple --map switches are allowed. When used in conjunction with
 Outputs a bunch of debugging information on both the server and the
 client.
 
+#### --watchfile=true
+
+If set, will use fs.watchFile instead of fs.watch.
+If you experience problems that the server stops watching a file
+after the first time you save a file, this method will help.
 
 Installing livestyle
 ====================

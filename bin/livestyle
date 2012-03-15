@@ -35,6 +35,9 @@ var express = require('express'),
             default: 3000,
             describe: 'The local post number to listen on'
         })
+        .options('watchfile', {
+            describe: 'force using watchFile'
+        })
         .check(function (argv) {
             if (argv.map) {
                 (typeof argv.map === 'string' ? [argv.map] : argv.map).forEach(function (urlEqualsDir) {
@@ -74,6 +77,7 @@ console.log('Listening to http://' + commandLineOptions.host + ':' + commandLine
 
 require('../lib/createLiveStyleApp')({
     debug: commandLineOptions.debug,
+    watchfile: commandLineOptions.watchfile,
     documentRoot: documentRoot,
     mappings: mappings,
     proxy: commandLineOptions.proxy || null
