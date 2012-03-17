@@ -35,15 +35,27 @@
                 'i'),
                 remote = /:\/\/|^\/\//;
 
+            if (!local.test(href) && (/^\/\//.test(href) || /^[a-z0-9\+]+:\/\//i.test(href))) {
+                return false;
+            }
+
             if (/^data:/.test(href)) {
                 // AdBlock for Chrome injects these
                 return false;
             }
 
-            // Normalize all hrefs to be root relative
-            href = '/' + href.replace(local, '').replace(/^\//, '').replace(/\?.*$/, '');
+            // Normalize to be root relative:
+            href = href.replace(local, '').replace(/\?.*$/, '');
+            if (!/^\//.test(href)) {
+                href = location.pathname.replace(/[^\/]+$/, '') + href;
+            }
 
-            return !remote.test(href) && href;
+            // Normalize: /foo/../bar => /bar
+            while (/\/[^\/\.][^\/]*\/\.\.\//.test(href)) {
+                href = href.replace(/\/[^\/\.][^\/]*\/\.\.\//, '/');
+            }
+
+            return href;
         },
         findCssIncludes = function () {
             var cssIncludes = [],
