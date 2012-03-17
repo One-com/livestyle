@@ -23,6 +23,8 @@
     }
 
     var pollTimeout = 2000,
+        changedHrefsQueue = [], // Queue of incoming change events
+        isBusyByHref = {},
         escapeRegExp = function (str) {
             return str.replace(/[\.\+\*\{\}\[\]\(\)\?\^\$]/g, '\\$&');
         },
@@ -97,6 +99,7 @@
         // Replaces a link tag with an updated version. Just replacing the href would cause FOUC.
         // We insert the new node before the old one and remove the old one after the new one has loaded.
         replaceLinkTag = function (node, href) {
+            isBusyByHref[href] = (isBusyByHref[href] || 0) + 1;
             var parent = node.parentNode,
                 newNode = node.cloneNode(true),
                 monitor;
@@ -109,17 +112,18 @@
                 parent.appendChild(newNode);
             }
 
-            parent.busy = node.busy = true;
             newNode.href = href;
             newNode.onload = function () {
-                newNode.busy = false;
+                isBusyByHref[href] -= 1;
                 if (node.parentNode) {
                     parent.removeChild(node);
 
                     clearInterval(monitor);
                 }
+                // There may be additional occurrences of this href in changedHrefsQueue that can be processed
+                // now that the busy counter was decremented:
+                processNextChangedHref();
             };
-
             monitor = setInterval(function () {
                 try {
                     if (newNode.sheet && newNode.sheet.cssRules.length > 0) { // Throws an error if the stylesheet hasn't loaded
@@ -128,18 +132,35 @@
                 } catch (err) {}
             }, 20);
         },
-        replaceStyleTag = function (node, oldHref, newHref) {
+        replaceStyleTag = function (node, oldHref, href) {
             var parent = node.parentNode,
                 newNode = node.cloneNode(),
                 replacerRegexp = new RegExp("@import\\s+url\\([\"']?" + oldHref.replace(/[\?\[\]\(\)\{\}]/g, "\\$&") + "[\"']?\\)");
 
-            newNode.textContent = node.textContent.replace(replacerRegexp, '@import url(\'' + newHref + '\')');
+            newNode.textContent = node.textContent.replace(replacerRegexp, '@import url(\'' + addCacheBuster(href) + '\')');
             parent.insertBefore(newNode, node);
             parent.removeChild(node);
         },
-        refresh = function (href) {
+        processNextChangedHref = function () {
+            var i,
+                href;
+            // Find the first non-busy href in changedHrefsQueue:
+            for (i = 0 ; i < changedHrefsQueue.length ; i += 1) {
+                if (isBusyByHref[changedHrefsQueue[i]]) {
+                    if (liveStyleOptions.debug) {
+                        log("Postponing 'change' notification on stylesheet that's already being refreshed: " + changedHrefsQueue[i]);
+                    }
+                } else {
+                    href = changedHrefsQueue.splice(i, 1)[0];
+                    break;
+                }
+            }
+            if (!href) {
+                return;
+            }
+            log('Refreshing ' + href);
+
             var cssIncludes = findCssIncludes(),
-                i,
                 cssInclude,
                 cssIncludeHref,
                 newHref,
@@ -154,15 +175,6 @@
                 cssIncludeHref = removeCacheBuster(cssInclude.href);
 
                 if (cssIncludeHref === href) {
-                    if (cssInclude.node.busy) {
-                        if (liveStyleOptions.debug) {
-                            log("Ignoring 'change' notification on stylesheet that's already being refreshed: " + href);
-                        }
-                        break;
-                    }
-
-                    newHref = addCacheBuster(href);
-
                     if (cssInclude.type === 'link') {
                         // Less.js support (https://github.com/cloudhead/less.js)
                         if (/\bstylesheet\/less\b/i.test(cssInclude.node.getAttribute('rel')) && typeof less !== 'undefined') {
@@ -171,12 +183,12 @@
                             // So instead we'll just have to brutally refresh ALL less includes
                             less.refresh();
                         } else {
-                            replaceLinkTag(cssInclude.node, newHref);
+                            replaceLinkTag(cssInclude.node, href);
                         }
                     }
 
                     if (cssInclude.type === 'import') {
-                        replaceStyleTag(cssInclude.styleElement, cssInclude.href, newHref);
+                        replaceStyleTag(cssInclude.styleElement, cssInclude.href, addCacheBuster(href));
                     }
 
                     if (cssInclude.type === 'prefixfree') {
@@ -191,6 +203,7 @@
                     break;
                 }
             }
+            processNextChangedHref(); // We consumed an item from changedHrefsQueue, keep going
         },
         startListening = function () {
             var socket = io.connect();
@@ -220,9 +233,14 @@
 
                 watchNewStylesheets();
                 setInterval(watchNewStylesheets, pollTimeout);
-            }).on('change', function (url) {
-                log('Received change notification for ' + url + ', refreshing');
-                refresh(url);
+            }).on('change', function (href) {
+                if (changedHrefsQueue.indexOf(href) === -1) {
+                    changedHrefsQueue.push(href);
+                    log('Received change notification for ' + href + ', queued');
+                    processNextChangedHref();
+                } else {
+                    log('Received change notification for ' + href + ', skipped (already in queue)');
+                }
             });
         },
         state = {},
