@@ -38,6 +38,9 @@ var express = require('express'),
         .options('watchfile', {
             describe: 'force using watchFile'
         })
+        .options('mtime', {
+            describe: 'suppress change events unless the mtime of a file has changed (experimental, fs.watch only)'
+        })
         .check(function (argv) {
             if (argv.map) {
                 (typeof argv.map === 'string' ? [argv.map] : argv.map).forEach(function (urlEqualsDir) {
@@ -77,6 +80,7 @@ console.log('Listening to http://' + commandLineOptions.host + ':' + commandLine
 
 require('../lib/createLiveStyleApp')({
     debug: commandLineOptions.debug,
+    mtime: commandLineOptions.mtime,
     watchfile: commandLineOptions.watchfile,
     documentRoot: documentRoot,
     mappings: mappings,

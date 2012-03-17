@@ -75,6 +75,11 @@ If set, will use fs.watchFile instead of fs.watch.
 If you experience problems that the server stops watching a file
 after the first time you save a file, this method will help.
 
+#### --mtime
+
+Only notify clients about a changed file if its `mtime` has
+increased. Experimental, only supported when using `fs.watch`.
+
 Installing livestyle
 ====================
 Livestyle requires NodeJS and npm to be installed. See this page for
