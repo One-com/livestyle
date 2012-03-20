@@ -21,12 +21,12 @@
         "node": ">= 0.4.0"
     },
     "dependencies": {
-        "express": "= 2.5.2",
-        "express-hijackresponse": "= 0.0.6",
-        "optimist": "= 0.3.0",
-        "request": "= 2.9.3",
-        "socket.io": "= 0.8.7",
-        "socket.io-client": "= 0.8.7"
+        "express": "=2.5.8",
+        "express-hijackresponse": "=0.0.6",
+        "optimist": "=0.3.0",
+        "request": "=2.9.3",
+        "socket.io": "=0.8.7",
+        "socket.io-client": "=0.8.7"
     },
     "directories": {
         "bin": "./bin"
