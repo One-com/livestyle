@@ -30,10 +30,17 @@
         },
         cleanHref = function (href) {
             var local = new RegExp(
-                '^' + escapeRegExp(document.location.protocol + '//' + document.location.host + (document.location.port ? ':' + document.location.port : '')) + '/' +
-                (liveStyleOptions.proxy ? '|^' + escapeRegExp(liveStyleOptions.proxy) : ''),
+                '^' + escapeRegExp(document.location.protocol + '//' + document.location.host + (document.location.port ? ':' + document.location.port : '')) + '/',
                 'i'),
+                proxy,
                 remote = /:\/\/|^\/\//;
+
+            if (liveStyleOptions.proxy) {
+                proxy = new RegExp('^' + escapeRegExp(liveStyleOptions.proxy), 'i');
+                if (proxy.test(href)) {
+                    return '/' + href.replace(proxy, '');
+                }
+            }
 
             if (!local.test(href) && (/^\/\//.test(href) || /^[a-z0-9\+]+:\/\//i.test(href))) {
                 return false;
