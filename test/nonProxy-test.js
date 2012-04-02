@@ -28,7 +28,44 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
             assert.matches(body, /<\/script><\/head>/);
         }
     },
+    'create a livestyle server in non-proxy mode with watchfile:true, subscribe to changes in styles.css, then overwrite it': {
+        topic: function () {
+            var callback = this.callback,
+                appInfo = createLiveStyleTestServer({documentRoot: path.resolve(__dirname, 'nonProxy'), watchfile: true}),
+                cssFileName = path.resolve(__dirname, 'nonProxy/styles.css'),
+                changedFileNames = [];
 
+            // Wait a couple of seconds for the server to become available, then connect to it:
+            setTimeout(function () {
+                var socket = ioClient.connect('http://localhost:' + appInfo.port);
+
+                socket.on('connect', function () {
+                    socket.emit('watch', ['/styles.css']);
+                    socket.on('change', function (fileName) {
+                        changedFileNames.push(fileName);
+                    });
+
+                    // Wait a second, then overwrite the watched file:
+                    setTimeout(function () {
+                        fs.writeFileSync(cssFileName, 'body {\n    background-color: ' + getRandomColor() + ';\n}\n', 'utf-8');
+
+                        // Wait another second, then reset the file to its original contents:
+                        setTimeout(function () {
+                            fs.writeFile(cssFileName, 'body {\n    background-color: red;\n}\n', 'utf-8', function () {
+                                // Wait another second and report back to the callback:
+                                setTimeout(function () {
+                                    callback(null, changedFileNames);
+                                }, 1000);
+                            });
+                        }, 1000);
+                    }, 1000);
+                });
+            }, 2000);
+        },
+        'the list of changed file names should contain styles.css twice': function (changedFileNames) {
+            assert.deepEqual(changedFileNames, ['/styles.css', '/styles.css']);
+        }
+    },
     'create a livestyle server in non-proxy mode, subscribe to changes in styles.css, then overwrite it': {
         topic: function () {
             var callback = this.callback,
@@ -63,8 +100,9 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
                 });
             }, 2000);
         },
-        'the list of changed file names should contain styles.css twice': function (changedFileNames) {
-            assert.deepEqual(changedFileNames, ['/styles.css', '/styles.css']);
+        'the list of changed file names should only contain styles.css (and at least twice)': function (changedFileNames) {
+            assert.greater(changedFileNames.length, 1);
+            assert.ok(changedFileNames.every(function (fileName) {return fileName === '/styles.css';}));
         }
     },
     'create a livestyle server in non-proxy mode with a mapping from /foo/ to /bar/, then request /foo/hello.txt': {
