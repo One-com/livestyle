@@ -28,11 +28,11 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
             assert.matches(body, /<\/script><\/head>/);
         }
     },
-    'create a livestyle server in non-proxy mode with watchfile:true, subscribe to changes in styles.css, then overwrite it': {
+    'create a livestyle server in non-proxy mode with watchfile:true, subscribe to changes in style sheet.css, then overwrite it': {
         topic: function () {
             var callback = this.callback,
                 appInfo = createLiveStyleTestServer({documentRoot: path.resolve(__dirname, 'nonProxy'), watchfile: true}),
-                cssFileName = path.resolve(__dirname, 'nonProxy/styles.css'),
+                cssFileName = path.resolve(__dirname, 'nonProxy/style sheet.css'),
                 changedFileNames = [];
 
             // Wait a couple of seconds for the server to become available, then connect to it:
@@ -40,7 +40,7 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
                 var socket = ioClient.connect('http://localhost:' + appInfo.port);
 
                 socket.on('connect', function () {
-                    socket.emit('watch', ['/styles.css']);
+                    socket.emit('watch', ['/style%20sheet.css']);
                     socket.on('change', function (fileName) {
                         changedFileNames.push(fileName);
                     });
@@ -62,15 +62,15 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
                 });
             }, 2000);
         },
-        'the list of changed file names should contain styles.css twice': function (changedFileNames) {
-            assert.deepEqual(changedFileNames, ['/styles.css', '/styles.css']);
+        'the list of changed file names should contain style sheet.css twice': function (changedFileNames) {
+            assert.deepEqual(changedFileNames, ['/style%20sheet.css', '/style%20sheet.css']);
         }
     },
     'create a livestyle server in non-proxy mode, subscribe to changes in styles.css, then overwrite it': {
         topic: function () {
             var callback = this.callback,
                 appInfo = createLiveStyleTestServer({documentRoot: path.resolve(__dirname, 'nonProxy')}),
-                cssFileName = path.resolve(__dirname, 'nonProxy/styles.css'),
+                cssFileName = path.resolve(__dirname, 'nonProxy/style sheet.css'),
                 changedFileNames = [];
 
             // Wait a couple of seconds for the server to become available, then connect to it:
@@ -78,7 +78,7 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
                 var socket = ioClient.connect('http://localhost:' + appInfo.port);
 
                 socket.on('connect', function () {
-                    socket.emit('watch', ['/styles.css']);
+                    socket.emit('watch', ['/style%20sheet.css']);
                     socket.on('change', function (fileName) {
                         changedFileNames.push(fileName);
                     });
@@ -102,28 +102,28 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
         },
         'the list of changed file names should only contain styles.css (and at least twice)': function (changedFileNames) {
             assert.greater(changedFileNames.length, 1);
-            assert.ok(changedFileNames.every(function (fileName) {return fileName === '/styles.css';}));
+            assert.ok(changedFileNames.every(function (fileName) {return fileName === '/style%20sheet.css';}));
         }
     },
-    'create a livestyle server in non-proxy mode with a mapping from /foo/ to /bar/, then request /foo/hello.txt': {
+    'create a livestyle server in non-proxy mode with a mapping from /fo%20o/ to /ba%20r/, then request /fo%20o/hello.txt': {
         topic: function () {
             var callback = this.callback,
                 appInfo = createLiveStyleTestServer({
                     documentRoot: path.resolve(__dirname, 'nonProxy'),
                     mappings: {
-                        '/foo/': '/bar/'
+                        '/fo%20o/': '/ba%20r/'
                     }
                 });
 
             // Wait a couple of seconds for the server to become available
             setTimeout(function () {
-                request('http://127.0.0.1:' + appInfo.port + '/foo/hello.txt', callback);
+                request('http://127.0.0.1:' + appInfo.port + '/fo%20o/hello.txt', callback);
             }, 2000);
         },
         'The contents of /bar/hello.txt should be returned': function (err, response, body) {
             assert.isNull(err);
             assert.equal(response.statusCode, 200);
-            assert.equal(body, 'The contents of /bar/hello.txt\n');
+            assert.equal(body, 'The contents of /ba r/hello.txt\n');
         }
     }
 })['export'](module);
