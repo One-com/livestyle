@@ -35,6 +35,11 @@
                 proxy,
                 remote = /:\/\/|^\/\//;
 
+            // Skip things like chrome-extension://hmdcmlfkchdmnmnmheododdhjedfccka/inject/anchor-cursor-default.css?0.2.6
+            if (/^[\w\-]+:/.test(href) && !/^https?:/.test(href)) {
+                return false;
+            }
+
             if (liveStyleOptions.proxy) {
                 proxy = new RegExp('^' + escapeRegExp(liveStyleOptions.proxy), 'i');
                 if (proxy.test(href)) {
