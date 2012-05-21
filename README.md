@@ -20,7 +20,7 @@ editor. Effective use cases spotted so far:
 
 * Styling parts of web applications that require several clicks to
   get to the state you are working on.
-* Getting instant feedback from many browsers at the same time.
+* Getting instant feedback from many browsers at the same time, including mobile browsers!
 * Testing several media queries at the same time with different
   devices or browser window sizes.
 
@@ -122,7 +122,7 @@ Prefixfree
 ----------
 [Prefixfree](http://leaverou.github.com/prefixfree/) inserts vendor
 prefixes for the style properties that need them. It does this runtime
-in the browser by fetchin the stylesheet content thourhg XHR and
+in the browser by fetching the stylesheet content through XHR and
 replace the link tags with a style block with prefixed CSS. Livestyle
 now supports prefixfree.
 
