@@ -29,6 +29,9 @@
             return str.replace(/[\.\+\*\{\}\[\]\(\)\?\^\$]/g, '\\$&');
         },
         cleanHref = function (href) {
+            if (!href) {
+                return false;
+            }
             var local = new RegExp(
                 '^' + escapeRegExp(document.location.protocol + '//' + document.location.host + (document.location.port ? ':' + document.location.port : '')) + '/',
                 'i'),
@@ -94,10 +97,9 @@
 
                 if (typeof StyleFix !== 'undefined') {
                     // Prefixfree support
-                    href = style.href || style.getAttribute('data-href');
-
+                    href = cleanHref(style.href || style.getAttribute('data-href'));
                     if (href) {
-                        cssIncludes.push({type: 'prefixfree', href: cleanHref(href), node: style});
+                        cssIncludes.push({type: 'prefixfree', href: href, node: style});
                     }
                 }
 
@@ -106,8 +108,10 @@
                     if (urlParenthesesHref) {
                         urlParenthesesHref = urlParenthesesHref.replace(/^(['"])(.*)\1$/, '$2');
                     }
-                    var href = singleQuotedHref || doubleQuotedHref || urlParenthesesHref;
-                    cssIncludes.push({type: 'import', href: href, styleElement: style});
+                    var href = cleanHref(singleQuotedHref || doubleQuotedHref || urlParenthesesHref);
+                    if (href) {
+                        cssIncludes.push({type: 'import', href: href, styleElement: style});
+                    }
                 });
             }
 
