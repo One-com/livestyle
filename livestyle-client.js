@@ -91,6 +91,30 @@
                 }
             }
 
+            // Look for .compilessinclude {src: url(...);} in non-inline stylesheets:
+            for (i = 0 ; i < document.styleSheets.length ; i += 1) {
+                var styleSheet = document.styleSheets[i];
+                if (styleSheet.href) {
+                    for (var j = 0 ; j < styleSheet.cssRules.length ; j += 1) {
+                        cssRule = styleSheet.cssRules[j];
+                        if (/^\.compilessinclude$/.test(cssRule.selectorText)) {
+                            var urlToken = cssRule.style.getPropertyValue('src'),
+                                matchUrlToken = urlToken.match(/^url\((['"]|)(.*?)\1\)$/);
+                            if (matchUrlToken) {
+                                href = cleanHref(styleSheet.href);
+                                var watchHref = cleanHref(matchUrlToken[2]);
+                                if (href && watchHref) {
+                                    cssIncludes.push({type: 'link', href: href, watchHref: watchHref, node: styleSheet.ownerNode});
+                                }
+                            }
+                        } else {
+                            // These .compilessinclude rules always come first, so break on the first non-matching one:
+                            break;
+                        }
+                    }
+                }
+            }
+
             // Style tags: @includes and inline prefixfree blocks
             for (i = 0 ; i < styles.length ; i += 1) {
                 style = styles[i];
@@ -186,11 +210,9 @@
             if (!href) {
                 return;
             }
-            log('Refreshing ' + href);
 
             var cssIncludes = findCssIncludes(),
                 cssInclude,
-                cssIncludeHref,
                 newHref,
                 replacerRegExp;
 
@@ -200,9 +222,10 @@
 
             for (i = 0; i < cssIncludes.length; i += 1) {
                 cssInclude = cssIncludes[i];
-                cssIncludeHref = removeCacheBuster(cssInclude.href);
+                var matchAgainstHref = removeCacheBuster(cssInclude.watchHref || cssInclude.href);
 
-                if (cssIncludeHref === href) {
+                if (matchAgainstHref === href) {
+                    log('Refreshing ' + cssInclude.href);
                     if (cssInclude.type === 'link') {
                         // Less.js support (https://github.com/cloudhead/less.js)
                         if (/\bstylesheet\/less\b/i.test(cssInclude.node.getAttribute('rel')) && typeof less !== 'undefined') {
@@ -211,7 +234,7 @@
                             // So instead we'll just have to brutally refresh ALL less includes
                             less.refresh();
                         } else {
-                            replaceLinkTag(cssInclude.node, href);
+                            replaceLinkTag(cssInclude.node, cssInclude.href);
                         }
                     }
 
@@ -241,15 +264,15 @@
                     watchNewStylesheets = function () {
                         var cssIncludes = findCssIncludes(),
                             toWatch = [],
-                            url,
+                            href,
                             i;
                         //cssIncludes.unshift({ href: location.pathname }); // See https://github.com/One-com/livestyle/issues/11
 
                         for (i = 0; i < cssIncludes.length; i += 1) {
-                            url = removeCacheBuster(cssIncludes[i].href);
-                            if (hrefs.indexOf(url) === -1) {
-                                hrefs.push(url);
-                                toWatch.push(url);
+                            href = removeCacheBuster(cssIncludes[i].watchHref || cssIncludes[i].href);
+                            if (hrefs.indexOf(href) === -1) {
+                                hrefs.push(href);
+                                toWatch.push(href);
                             }
                         }
 
