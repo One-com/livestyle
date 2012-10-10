@@ -33,7 +33,7 @@
                 return false;
             }
             var local = new RegExp(
-                '^' + escapeRegExp(document.location.protocol + '//' + document.location.host + (document.location.port ? ':' + document.location.port : '')) + '/',
+                '^' + escapeRegExp(document.location.protocol + '//' + document.location.hostname + (document.location.port ? ':' + document.location.port : '')) + '/',
                 'i'),
                 proxy,
                 remote = /:\/\/|^\/\//;
