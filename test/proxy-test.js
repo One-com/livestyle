@@ -15,9 +15,9 @@ vows.describe('proxy mode test').addBatch({
     'create a livestyle server in pure proxy mode and an upstream server, then request an HTML file': {
         topic: function () {
             var callback = this.callback,
-                documentRoot = path.resolve(__dirname, 'proxy'),
+                root = path.resolve(__dirname, 'proxy'),
                 upstreamServer = express.createServer()
-                    .use(express['static'](documentRoot));
+                    .use(express['static'](root));
 
             upstreamServer.listen(0);
 
@@ -39,9 +39,9 @@ vows.describe('proxy mode test').addBatch({
     'create a livestyle server in pure proxy mode and an upstream server, then request an HTML file with no </head>': {
         topic: function () {
             var callback = this.callback,
-                documentRoot = path.resolve(__dirname, 'proxy'),
+                root = path.resolve(__dirname, 'proxy'),
                 upstreamServer = express.createServer()
-                    .use(express['static'](documentRoot));
+                    .use(express['static'](root));
 
             upstreamServer.listen(0);
 
@@ -63,9 +63,9 @@ vows.describe('proxy mode test').addBatch({
     'create a livestyle server in pure proxy mode and an upstream server, then request an HTML file with no </head> and no </html>': {
         topic: function () {
             var callback = this.callback,
-                documentRoot = path.resolve(__dirname, 'proxy'),
+                root = path.resolve(__dirname, 'proxy'),
                 upstreamServer = express.createServer()
-                    .use(express['static'](documentRoot));
+                    .use(express['static'](root));
 
             upstreamServer.listen(0);
 
@@ -87,7 +87,7 @@ vows.describe('proxy mode test').addBatch({
     'create a livestyle server in pure proxy mode and an upstream server that redirects /subdir to /subdir/, then request a directory': {
         topic: function () {
             var callback = this.callback,
-                documentRoot = path.resolve(__dirname, 'proxy'),
+                root = path.resolve(__dirname, 'proxy'),
                 upstreamServerUrl,
                 upstreamServer = express.createServer()
                     .use(function (req, res, next) {
@@ -124,9 +124,9 @@ vows.describe('proxy mode test').addBatch({
     'create a livestyle server with a mapping from /fo%20o/ to /ba%20r/ along with an upstream server, then request /fo%20o/hello.txt': {
         topic: function () {
             var callback = this.callback,
-                documentRoot = path.resolve(__dirname, 'proxy'),
+                root = path.resolve(__dirname, 'proxy'),
                 upstreamServer = express.createServer()
-                    .use(express['static'](documentRoot));
+                    .use(express['static'](root));
 
             upstreamServer.listen(0);
 

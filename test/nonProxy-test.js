@@ -14,7 +14,7 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
     'create a livestyle server in non-proxy mode, then request an HTML file': {
         topic: function () {
             var callback = this.callback,
-                appInfo = createLiveStyleTestServer({documentRoot: path.resolve(__dirname, 'nonProxy')});
+                appInfo = createLiveStyleTestServer({root: path.resolve(__dirname, 'nonProxy')});
 
             // Wait a couple of seconds for the server to become available
             setTimeout(function () {
@@ -31,7 +31,7 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
     'create a livestyle server in non-proxy mode, subscribe to changes in styles.css, then overwrite it': {
         topic: function () {
             var callback = this.callback,
-                appInfo = createLiveStyleTestServer({documentRoot: path.resolve(__dirname, 'nonProxy')}),
+                appInfo = createLiveStyleTestServer({root: path.resolve(__dirname, 'nonProxy')}),
                 cssFileName = path.resolve(__dirname, 'nonProxy/style sheet.css'),
                 changedFileNames = [];
 
@@ -71,7 +71,7 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
         topic: function () {
             var callback = this.callback,
                 appInfo = createLiveStyleTestServer({
-                    documentRoot: path.resolve(__dirname, 'nonProxy'),
+                    root: path.resolve(__dirname, 'nonProxy'),
                     mappings: {
                         '/fo%20o/': '/ba%20r/'
                     }

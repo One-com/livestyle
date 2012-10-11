@@ -8,11 +8,16 @@ var express = require('express'),
     mappings = {},
     optimist = require('optimist'),
     commandLineOptions = optimist
-        .usage('Usage: $0 [--proxy <remotehost> [-m <directoryMapping>]] [-d] [-h <hostname>] [-p <port>] [-r documentRoot]')
+        .usage('Usage: $0 [--proxy <remotehost> [-m <directoryMapping>]] [-d] [-h <hostname>] [-p <port>] [--root directory]')
         .boolean('d')
         .options('root', {
             alias: 'r',
             describe: 'The directory to serve static files from. Defaults to the current working directory unless --proxy is specified.'
+        })
+        .options('compiless', {
+            type: 'boolean',
+            describe: 'Whether to add the express-compiless middleware to the stack (compiles less files and serves it them as text/css).',
+            default: false
         })
         .options('debug', {
             alias: 'd',
@@ -23,7 +28,7 @@ var express = require('express'),
         })
         .options('map', {
             alias: 'm',
-            describe: 'Directory mappings of the form: remoteDir=localDir where localDir is relative to documentRoot unless prefixed with /'
+            describe: 'Directory mappings of the form: remoteDir=localDir where localDir is relative to the root directory unless prefixed with /'
         })
         .options('host', {
             alias: 'h',
@@ -36,7 +41,7 @@ var express = require('express'),
             describe: 'The local post number to listen on'
         })
         .options('watchfile', {
-            describe: 'force using watchFile'
+            describe: 'force using fs.watchFile instead of fs.watch (works better on some OSes)'
         })
         .options('mtime', {
             describe: 'suppress change events unless the mtime of a file has changed (experimental, fs.watch only)'
@@ -54,12 +59,12 @@ var express = require('express'),
             }
         })
         .argv,
-        documentRoot;
+        root;
 
 if (commandLineOptions.root) {
-    documentRoot = path.resolve(process.cwd(), commandLineOptions.root);
+    root = path.resolve(process.cwd(), commandLineOptions.root);
 } else if (!commandLineOptions.proxy) {
-    documentRoot = process.cwd();
+    root = process.cwd();
 }
 
 if (commandLineOptions.help) {
@@ -69,11 +74,11 @@ if (commandLineOptions.help) {
 
 if (commandLineOptions.proxy) {
     console.log('Proxying to ' + commandLineOptions.proxy);
-    if (documentRoot) {
-        console.log('Serving static CSS files from ' + documentRoot);
+    if (root) {
+        console.log('Serving static CSS files from ' + root);
     }
-} else if (documentRoot) {
-    console.log('Serving static files from ' + documentRoot);
+} else if (root) {
+    console.log('Serving static files from ' + root);
 }
 
 console.log('Listening to http://' + commandLineOptions.host + ':' + commandLineOptions.port + '/');
@@ -82,7 +87,8 @@ require('../lib/createLiveStyleApp')({
     debug: commandLineOptions.debug,
     mtime: commandLineOptions.mtime,
     watchfile: commandLineOptions.watchfile,
-    documentRoot: documentRoot,
+    root: root,
+    compiless: commandLineOptions.compiless,
     mappings: mappings,
     proxy: commandLineOptions.proxy || null
 }).listen(commandLineOptions.port, commandLineOptions.host);

@@ -64,6 +64,12 @@ switch: `--map /foo/=/bar/`
 Multiple --map switches are allowed. When used in conjunction with
 `--proxy`, the mappings are applied before proxying the request.
 
+#### --compiless
+
+Compile less assets on-the-fly using <a
+href="https://github.com/papandreou/express-compiless">express-compiless</a>. Also
+supports watching @import'ed less assets.
+
 #### --debug|-d
 
 Outputs a bunch of debugging information on both the server and the
