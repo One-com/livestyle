@@ -156,6 +156,8 @@
                 newNode = node.cloneNode(true),
                 monitor;
 
+            newNode.removeAttribute('href');
+
             // The node must be added to the document before the href is set, otherwise IE9 won't
             // apply the styles.
             if (node.nextSibling) {
