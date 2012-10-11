@@ -150,8 +150,11 @@
 
         // Replaces a link tag with an updated version. Just replacing the href would cause FOUC.
         // We insert the new node before the old one and remove the old one after the new one has loaded.
-        replaceLinkTag = function (node, href) {
+        replaceLinkTag = function (node, href, watchHref) {
             isBusyByHref[href] = (isBusyByHref[href] || 0) + 1;
+            if (watchHref) {
+                isBusyByHref[watchHref] = (isBusyByHref[watchHref] || 0) + 1;
+            }
             var parent = node.parentNode,
                 newNode = node.cloneNode(true),
                 monitor;
@@ -170,6 +173,9 @@
             newNode.onload = function () {
                 newNode.onload = null;
                 isBusyByHref[href] -= 1;
+                if (watchHref) {
+                    isBusyByHref[watchHref] -= 1;
+                }
                 if (node.parentNode) {
                     parent.removeChild(node);
                 }
@@ -219,7 +225,6 @@
             }
 
             var cssIncludes = findCssIncludes(),
-                cssInclude,
                 newHref,
                 replacerRegExp;
 
@@ -241,7 +246,7 @@
                             // So instead we'll just have to brutally refresh ALL less includes
                             less.refresh();
                         } else {
-                            replaceLinkTag(cssInclude.node, cssInclude.href);
+                            replaceLinkTag(cssInclude.node, cssInclude.href, cssInclude.watchHref);
                         }
                     }
 
