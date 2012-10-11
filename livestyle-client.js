@@ -168,22 +168,27 @@
 
             newNode.href = href;
             newNode.onload = function () {
+                newNode.onload = null;
                 isBusyByHref[href] -= 1;
                 if (node.parentNode) {
                     parent.removeChild(node);
-
+                }
+                if (monitor) {
                     clearInterval(monitor);
+                    monitor = null;
                 }
                 // There may be additional occurrences of this href in changedHrefsQueue that can be processed
                 // now that the busy counter was decremented:
                 processNextChangedHref();
             };
             monitor = setInterval(function () {
+                var isReady;
                 try {
-                    if (newNode.sheet && newNode.sheet.cssRules.length > 0) { // Throws an error if the stylesheet hasn't loaded
-                        newNode.onload();
-                    }
+                    isReady = newNode.sheet && newNode.sheet.cssRules.length > 0; // Throws an error if the stylesheet hasn't loaded
                 } catch (err) {}
+                if (isReady) {
+                    newNode.onload();
+                }
             }, 20);
         },
         replaceStyleTag = function (node, oldHref, href) {
