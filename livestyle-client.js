@@ -169,7 +169,7 @@
                 parent.appendChild(newNode);
             }
 
-            newNode.href = href;
+            newNode.setAttribute('href', href);
             newNode.onload = function () {
                 newNode.onload = null;
                 isBusyByHref[href] -= 1;
@@ -233,8 +233,8 @@
             }
 
             for (i = 0; i < cssIncludes.length; i += 1) {
-                cssInclude = cssIncludes[i];
-                var matchAgainstHref = removeCacheBuster(cssInclude.watchHref || cssInclude.href);
+                var cssInclude = cssIncludes[i],
+                    matchAgainstHref = removeCacheBuster(cssInclude.watchHref || cssInclude.href);
 
                 if (matchAgainstHref === href) {
                     log('Refreshing ' + cssInclude.href);
@@ -248,13 +248,9 @@
                         } else {
                             replaceLinkTag(cssInclude.node, cssInclude.href, cssInclude.watchHref);
                         }
-                    }
-
-                    if (cssInclude.type === 'import') {
+                    } else if (cssInclude.type === 'import') {
                         replaceStyleTag(cssInclude.styleElement, cssInclude.href, addCacheBuster(href));
-                    }
-
-                    if (cssInclude.type === 'prefixfree') {
+                    } else if (cssInclude.type === 'prefixfree') {
                         // The next two lines are hacks to make Prefixfree think this is a link and not a style block
                         cssInclude.node.setAttribute('href', href); // No cache buster needed
                         cssInclude.node.rel = 'stylesheet';
