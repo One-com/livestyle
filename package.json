@@ -22,7 +22,7 @@
     },
     "dependencies": {
         "express": "=2.5.8",
-        "express-compiless": "=0.0.7",
+        "express-compiless": "=0.0.8",
         "express-hijackresponse": "=0.0.6",
         "optimist": "=0.3.0",
         "request": "=2.9.3",
