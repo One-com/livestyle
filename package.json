@@ -21,7 +21,7 @@
         "node": ">= 0.4.0"
     },
     "dependencies": {
-        "express": "=2.5.8",
+        "express": "=2.5.11",
         "express-compiless": "=0.0.8",
         "express-hijackresponse": "=0.0.6",
         "optimist": "=0.3.0",
