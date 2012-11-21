@@ -110,6 +110,27 @@ Currently there are some troubles with updating stylesheets using
 http://www.stevesouders.com/blog/2009/04/09/dont-use-import/
 
 
+Module loaders
+==============
+Livestyle supports asynchronous loading and injection of stylesheets.
+If you are using requirejs you might want to take a look at css.js and
+less.js, wich can be used as module loaders for both less and css
+files using requirejs like so:
+
+``` javascript
+define([
+    'less!bootstrap/theme.less',
+    'css!styles/myLoginBox.css'
+], function () {
+    // My module depending on certain styles
+})
+```
+
+These two loaders are both usable without livestyle.
+The less.js loader will change behavior depending on wether you have
+set the `--compiless` flag for livestyle to make live updates possible.
+
+
 CSS preprocessors
 =================
 Since livestyle watches the css files that are actually served to the

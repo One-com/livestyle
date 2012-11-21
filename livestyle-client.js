@@ -3,6 +3,7 @@
     'use strict';
 
     var liveStyleOptions = {}; // The options will be injected by the server
+    window.liveStyle = liveStyleOptions; // Make it detectable on the client that livestyle is in use
 
     function log(msg) {
         if (liveStyleOptions.debug && window.console) {
