@@ -19,6 +19,12 @@ var express = require('express'),
             describe: 'Whether to add the express-compiless middleware to the stack (compiles less files and serves it them as text/css).',
             default: false
         })
+        .options('processimage', {
+            alias: 'processimages',
+            type: 'boolean',
+            describe: 'Whether to add the express-processimage middleware to the stack.',
+            default: false
+        })
         .options('debug', {
             alias: 'd',
             describe: 'Turn on debug mode (server logs events to stderr, client logs to console).'
@@ -89,6 +95,7 @@ require('../lib/createLiveStyleApp')({
     watchfile: commandLineOptions.watchfile,
     root: root,
     compiless: commandLineOptions.compiless,
+    processImage: commandLineOptions.processimage,
     mappings: mappings,
     proxy: commandLineOptions.proxy || null
 }).listen(commandLineOptions.port, commandLineOptions.host);

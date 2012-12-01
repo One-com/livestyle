@@ -70,6 +70,11 @@ Compile less assets on-the-fly using <a
 href="https://github.com/papandreou/express-compiless">express-compiless</a>. Also
 supports watching @import'ed less assets.
 
+#### --processimage
+
+Process images on the server according to the query string using using <a
+href="https://github.com/papandreou/express-processimage">express-processimage</a>.
+
 #### --debug|-d
 
 Outputs a bunch of debugging information on both the server and the

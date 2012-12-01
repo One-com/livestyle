@@ -1,0 +1,21 @@
+.turtle {
+    float: left;
+    width: 481px;
+    height: 424px;
+}
+
+.first {
+    background-image: url(turtle.jpg);
+}
+
+.second {
+    background-image: url(turtle.jpg?jpegtran=-flip,horizontal);
+}
+
+.third {
+    background-image: url(turtle.jpg?jpegtran=-grayscale);
+}
+
+.fourth {
+    background-image: url(turtle.jpg?setFormat=png&pngquant=16);
+}
