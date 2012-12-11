@@ -104,22 +104,24 @@
                     ownerNode = styleSheet.owningElement || styleSheet.ownerNode;
                 if (styleSheet.href) {
                     var cssRules = styleSheet.rules || styleSheet.cssRules; // IE8 and below use .rules
-                    for (var j = 0 ; j < cssRules.length ; j += 1) {
-                        cssRule = cssRules[j];
-                        if (/^\.compilessinclude$/.test(cssRule.selectorText)) {
-                            var backgroundImage = cssRule.style.backgroundImage || (cssRule.style.getPropertyValue && cssRule.style.getPropertyValue('background-image')) || cssRule.style.cssText,
-                                matchBackgroundImage = backgroundImage && backgroundImage.match(/url\((['"]|)(.*?)\1\)/);
-                            if (matchBackgroundImage) {
-                                href = cleanHref(styleSheet.href);
-                                var backgroundImageUrl = URI(matchBackgroundImage[2]).absoluteTo(ownerNode.getAttribute('href')).absoluteTo(location.href).toString(),
-                                    watchHref = cleanHref(backgroundImageUrl);
-                                if (href && watchHref) {
-                                    cssIncludes.push({type: 'link', href: href, watchHref: watchHref, node: ownerNode});
+                    if (cssRules) {
+                        for (var j = 0 ; j < cssRules.length ; j += 1) {
+                            cssRule = cssRules[j];
+                            if (/^\.compilessinclude$/.test(cssRule.selectorText)) {
+                                var backgroundImage = cssRule.style.backgroundImage || (cssRule.style.getPropertyValue && cssRule.style.getPropertyValue('background-image')) || cssRule.style.cssText,
+                                    matchBackgroundImage = backgroundImage && backgroundImage.match(/url\((['"]|)(.*?)\1\)/);
+                                if (matchBackgroundImage) {
+                                    href = cleanHref(styleSheet.href);
+                                    var backgroundImageUrl = URI(matchBackgroundImage[2]).absoluteTo(ownerNode.getAttribute('href')).absoluteTo(location.href).toString(),
+                                        watchHref = cleanHref(backgroundImageUrl);
+                                    if (href && watchHref) {
+                                        cssIncludes.push({type: 'link', href: href, watchHref: watchHref, node: ownerNode});
+                                    }
                                 }
+                            } else {
+                                // These .compilessinclude rules always come first, so break on the first non-matching one:
+                                break;
                             }
-                        } else {
-                            // These .compilessinclude rules always come first, so break on the first non-matching one:
-                            break;
                         }
                     }
                 }
