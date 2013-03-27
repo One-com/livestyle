@@ -23,7 +23,7 @@
     "dependencies": {
         "express": "=2.5.11",
         "express-compiless": "=0.1.1",
-        "express-hijackresponse": "=0.1.0",
+        "express-hijackresponse": "=0.1.2",
         "express-processimage": "=0.0.6",
         "optimist": "=0.3.0",
         "request": "=2.9.3",
