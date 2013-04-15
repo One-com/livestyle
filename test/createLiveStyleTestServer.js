@@ -4,8 +4,11 @@ module.exports = function createLiveStyleTestServer(options) {
     var app = createLiveStyleApp(options);
 
     // Listen on a vacant TCP port and hand back the url + app
-    app.listen(0);
-    var address = app.address();
+    var server = app.listen(0);
+
+    require('../lib/installLiveCssFileWatcherInServer')(server, options, require('socket.io'));
+
+    var address = server.address();
     return {
         hostname: address.address,
         port: address.port,

@@ -89,13 +89,21 @@ if (commandLineOptions.proxy) {
 
 console.log('Listening to http://' + commandLineOptions.host + ':' + commandLineOptions.port + '/');
 
-require('../lib/createLiveStyleApp')({
+var server = require('../lib/createLiveStyleApp')({
     debug: commandLineOptions.debug,
-    mtime: commandLineOptions.mtime,
-    watchfile: commandLineOptions.watchfile,
     root: root,
     compiless: commandLineOptions.compiless,
     processImage: commandLineOptions.processimage,
     mappings: mappings,
     proxy: commandLineOptions.proxy || null
 }).listen(commandLineOptions.port, commandLineOptions.host);
+
+if (root) {
+    require('../lib/installLiveCssFileWatcherInServer')(server, {
+        debug: commandLineOptions.debug,
+        root: root,
+        mtime: commandLineOptions.mtime,
+        watchfile: commandLineOptions.watchfile,
+        mappings: commandLineOptions.mappings
+    }, require('socket.io'));
+}

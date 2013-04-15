@@ -16,12 +16,10 @@ vows.describe('proxy mode test').addBatch({
         topic: function () {
             var callback = this.callback,
                 root = path.resolve(__dirname, 'proxy'),
-                upstreamServer = express.createServer()
-                    .use(express['static'](root));
-
-            upstreamServer.listen(0);
-
-            var upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/',
+                upstreamApp = express()
+                    .use(express['static'](root)),
+                upstreamServer = upstreamApp.listen(0),
+                upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/',
                 appInfo = createLiveStyleTestServer({
                     proxy: upstreamServerUrl
                 });
@@ -40,12 +38,10 @@ vows.describe('proxy mode test').addBatch({
         topic: function () {
             var callback = this.callback,
                 root = path.resolve(__dirname, 'proxy'),
-                upstreamServer = express.createServer()
-                    .use(express['static'](root));
-
-            upstreamServer.listen(0);
-
-            var upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/',
+                upstreamApp = express()
+                    .use(express['static'](root)),
+                upstreamServer = upstreamApp.listen(0),
+                upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/',
                 appInfo = createLiveStyleTestServer({
                     proxy: upstreamServerUrl
                 });
@@ -64,12 +60,10 @@ vows.describe('proxy mode test').addBatch({
         topic: function () {
             var callback = this.callback,
                 root = path.resolve(__dirname, 'proxy'),
-                upstreamServer = express.createServer()
-                    .use(express['static'](root));
-
-            upstreamServer.listen(0);
-
-            var upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/',
+                upstreamApp = express()
+                    .use(express['static'](root)),
+                upstreamServer = upstreamApp.listen(0),
+                upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/',
                 appInfo = createLiveStyleTestServer({
                     proxy: upstreamServerUrl
                 });
@@ -89,7 +83,7 @@ vows.describe('proxy mode test').addBatch({
             var callback = this.callback,
                 root = path.resolve(__dirname, 'proxy'),
                 upstreamServerUrl,
-                upstreamServer = express.createServer()
+                upstreamApp = express()
                     .use(function (req, res, next) {
                         if (req.url === '/subdir') {
                             res.writeHead(301, {
@@ -99,9 +93,8 @@ vows.describe('proxy mode test').addBatch({
                         } else {
                             res.send(400);
                         }
-                    });
-
-            upstreamServer.listen(0);
+                    }),
+                upstreamServer = upstreamApp.listen(0);
 
             upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/';
 
@@ -125,12 +118,10 @@ vows.describe('proxy mode test').addBatch({
         topic: function () {
             var callback = this.callback,
                 root = path.resolve(__dirname, 'proxy'),
-                upstreamServer = express.createServer()
-                    .use(express['static'](root));
-
-            upstreamServer.listen(0);
-
-            var upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/',
+                upstreamApp = express()
+                    .use(express['static'](root)),
+                upstreamServer = upstreamApp.listen(0),
+                upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/',
                 appInfo = createLiveStyleTestServer({
                     proxy: upstreamServerUrl,
                     mappings: {
