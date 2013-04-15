@@ -144,9 +144,10 @@
                     if (urlParenthesesHref) {
                         urlParenthesesHref = urlParenthesesHref.replace(/^(['"])(.*)\1$/, '$2');
                     }
-                    var href = cleanHref(singleQuotedHref || doubleQuotedHref || urlParenthesesHref);
+                    var verbatimHref = singleQuotedHref || doubleQuotedHref || urlParenthesesHref,
+                        href = cleanHref(singleQuotedHref || doubleQuotedHref || urlParenthesesHref);
                     if (href) {
-                        cssIncludes.push({type: 'import', href: href, styleElement: style});
+                        cssIncludes.push({type: 'import', href: href, verbatimHref: verbatimHref, styleElement: style});
                     }
                 });
             }
@@ -209,12 +210,11 @@
                 }
             }, 20);
         },
-        replaceStyleTag = function (node, oldHref, href) {
+        replaceStyleTag = function (node, verbatimOldHref, href) {
             var parent = node.parentNode,
                 newNode = node.cloneNode(),
-                replacerRegexp = new RegExp("@import\\s+url\\([\"']?" + oldHref.replace(/[\?\[\]\(\)\{\}]/g, "\\$&") + "[\"']?\\)");
-
-            newNode.textContent = node.textContent.replace(replacerRegexp, '@import url(\'' + addCacheBuster(href) + '\')');
+                replacerRegExp = new RegExp("@import\\s+url\\([\"']?" + verbatimOldHref.replace(/[\.\?\[\]\(\)\{\}]/g, "\\$&") + "[\"']?\\);?");
+            newNode.textContent = node.textContent.replace(replacerRegExp, '@import url(\'' + addCacheBuster(removeCacheBuster(href)) + '\');').replace(/^\s*|\s*$/g, '');
             parent.insertBefore(newNode, node);
             parent.removeChild(node);
         },
@@ -261,7 +261,7 @@
                             replaceLinkTag(cssInclude.node, cssInclude.href, cssInclude.watchHref);
                         }
                     } else if (cssInclude.type === 'import') {
-                        replaceStyleTag(cssInclude.styleElement, cssInclude.href, addCacheBuster(href));
+                        replaceStyleTag(cssInclude.styleElement, cssInclude.verbatimHref, href);
                     } else if (cssInclude.type === 'prefixfree') {
                         // The next two lines are hacks to make Prefixfree think this is a link and not a style block
                         cssInclude.node.setAttribute('href', href); // No cache buster needed
