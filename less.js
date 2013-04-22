@@ -14,6 +14,7 @@ define([
 
                 $.ajax({
                     url: url,
+                    dataType: 'text',
                     success: function (data) {
                         var parser = new less.Parser({
                                 paths: [path]
