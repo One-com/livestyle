@@ -19,3 +19,12 @@
 .fourth {
     background-image: url(turtle.jpg?setFormat=png&pngquant=16);
 }
+
+.thesvg {
+    float: left;
+    border: 1px solid red;
+    width: 481px;
+    height: 424px;
+    background-image: url(network-error.svg?inkscape=--export-png);
+    background-color: red;
+}
