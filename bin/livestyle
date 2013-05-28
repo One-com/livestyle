@@ -25,6 +25,10 @@ var express = require('express'),
             describe: 'Whether to add the express-processimage middleware to the stack.',
             default: false
         })
+        .options('dead', {
+            default: false,
+            describe: 'Do not watch files on disc and do not inject the LiveStyle client'
+        })
         .options('debug', {
             alias: 'd',
             describe: 'Turn on debug mode (server logs events to stderr, client logs to console).'
@@ -90,6 +94,7 @@ if (commandLineOptions.proxy) {
 console.log('Listening to http://' + commandLineOptions.host + ':' + commandLineOptions.port + '/');
 
 var server = require('../lib/createLiveStyleApp')({
+    dead: commandLineOptions.dead,
     debug: commandLineOptions.debug,
     root: root,
     compiless: commandLineOptions.compiless,
@@ -98,7 +103,7 @@ var server = require('../lib/createLiveStyleApp')({
     proxy: commandLineOptions.proxy || null
 }).listen(commandLineOptions.port, commandLineOptions.host);
 
-if (root) {
+if (root && !commandLineOptions.dead) {
     require('../lib/installLiveCssFileWatcherInServer')(server, {
         debug: commandLineOptions.debug,
         root: root,
