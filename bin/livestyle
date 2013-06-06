@@ -14,6 +14,11 @@ var express = require('express'),
             alias: 'r',
             describe: 'The directory to serve static files from. Defaults to the current working directory unless --proxy is specified.'
         })
+        .options('watchhtml', {
+            type: 'boolean',
+            describe: 'Watch the HTML file itself and reload the entire page on change',
+            default: false
+        })
         .options('compiless', {
             type: 'boolean',
             describe: 'Whether to add the express-compiless middleware to the stack (compiles less files and serves it them as text/css).',
@@ -94,6 +99,7 @@ if (commandLineOptions.proxy) {
 console.log('Listening to http://' + commandLineOptions.host + ':' + commandLineOptions.port + '/');
 
 var server = require('../lib/createLiveStyleApp')({
+    watchHtml: commandLineOptions.watchhtml,
     dead: commandLineOptions.dead,
     debug: commandLineOptions.debug,
     root: root,

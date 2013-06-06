@@ -286,8 +286,10 @@
                             toWatch = [],
                             href,
                             i;
-                        //cssIncludes.unshift({ href: location.pathname }); // See https://github.com/One-com/livestyle/issues/11
 
+                        if (liveStyleOptions.watchHtml) {
+                            cssIncludes.unshift({type: 'html', href: location.pathname}); // See https://github.com/One-com/livestyle/issues/11
+                        }
                         for (i = 0; i < cssIncludes.length; i += 1) {
                             href = removeCacheBuster(cssIncludes[i].watchHref || cssIncludes[i].href);
                             if (hrefs.indexOf(href) === -1) {
@@ -377,7 +379,9 @@
                         setTimeout(startPolling, pollTimeout);
                     }
                 };
-            //cssIncludes.unshift({ href: location.pathname }); // See https://github.com/One-com/livestyle/issues/11
+            if (liveStyleOptions.watchHtml) {
+                cssIncludes.unshift({type: 'html', href: location.pathname}); // See https://github.com/One-com/livestyle/issues/11
+            }
             proceed();
         };
 
