@@ -25,6 +25,6 @@
     border: 1px solid red;
     width: 481px;
     height: 424px;
-    background-image: url(network-error.svg?inkscape=--export-png);
+    background-image: url(network-error.svg?svgfilter=--runScript,--stopColor=beige&inkscape=--export-png);
     background-color: red;
 }
