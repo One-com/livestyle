@@ -75,6 +75,14 @@ supports watching @import'ed less assets.
 Process images on the server according to the query string using using <a
 href="https://github.com/papandreou/express-processimage">express-processimage</a>.
 
+#### --watchhtml
+
+Also watch the HTML file itself and refresh if it changes on disc.
+
+#### --watchcssimages
+
+Also watch (background) images used by CSS and refresh them if they change on disc.
+
 #### --debug|-d
 
 Outputs a bunch of debugging information on both the server and the
