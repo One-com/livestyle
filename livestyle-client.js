@@ -98,7 +98,6 @@
                 }
             }
 
-            // Look for .compilessinclude {src: url(...);} in non-inline stylesheets:
             for (i = 0 ; i < document.styleSheets.length ; i += 1) {
                 var styleSheet = document.styleSheets[i],
                     ownerNode = styleSheet.owningElement || styleSheet.ownerNode;
@@ -107,6 +106,7 @@
                     if (cssRules) {
                         for (var j = 0 ; j < cssRules.length ; j += 1) {
                             cssRule = cssRules[j];
+                            // Look for .compilessinclude {src: url(...);} in non-inline stylesheets:
                             if (/^\.compilessinclude$/.test(cssRule.selectorText)) {
                                 var backgroundImage = cssRule.style.backgroundImage || (cssRule.style.getPropertyValue && cssRule.style.getPropertyValue('background-image')) || cssRule.style.cssText,
                                     matchBackgroundImage = backgroundImage && backgroundImage.match(/url\((['"]|)(.*?)\1\)/);
@@ -118,9 +118,30 @@
                                         cssIncludes.push({type: 'link', href: href, watchHref: watchHref, node: ownerNode});
                                     }
                                 }
-                            } else {
-                                // These .compilessinclude rules always come first, so break on the first non-matching one:
-                                break;
+                            }
+                        }
+                    }
+                }
+                if (liveStyleOptions.watchCssImages) {
+                    var baseUrl = styleSheet.href || location.href,
+                        cssRules = styleSheet.rules || styleSheet.cssRules; // IE8 and below use .rules
+                    if (cssRules) {
+                        for (var j = 0 ; j < cssRules.length ; j += 1) {
+                            cssRule = cssRules[j];
+                            // Look for .compilessinclude {src: url(...);} in non-inline stylesheets:
+                            style = cssRule.style;
+                            for (var k = 0 ; k < style.length ; k += 1) {
+                                var propertyName = style[k],
+                                    value = style[propertyName],
+                                    matchUrl = value.match(/url\((['"]|)(.*?)\1\)/),
+                                    url = matchUrl && matchUrl[2];
+                               if (url && !/^data:/.test(url)) {
+                                    var cssImageUrl = URI(url).absoluteTo(baseUrl).absoluteTo(location.href).toString(),
+                                        watchHref = cleanHref(cssImageUrl);
+                                    if (href && watchHref) {
+                                        cssIncludes.push({type: 'cssImage', href: href, watchHref: watchHref, cssRule: cssRule, propertyName: propertyName});
+                                    }
+                                }
                             }
                         }
                     }
@@ -262,6 +283,13 @@
                         }
                     } else if (cssInclude.type === 'import') {
                         replaceStyleTag(cssInclude.styleElement, cssInclude.verbatimHref, href);
+                    } else if (cssInclude.type === 'cssImage') {
+                        var value = cssInclude.cssRule.style[cssInclude.propertyName];
+                        value = value.replace(/url\((['"]|)(.*?)\1\)/g, function ($0, quoteChar, url) {
+                            return "url(" + quoteChar + addCacheBuster(url) + quoteChar + ")";
+                        });
+                        cssInclude.cssRule.style.setProperty(cssInclude.propertyName, value, cssInclude.cssRule.style.getPropertyPriority(cssInclude.propertyName));
+
                     } else if (cssInclude.type === 'prefixfree') {
                         // The next two lines are hacks to make Prefixfree think this is a link and not a style block
                         cssInclude.node.setAttribute('href', href); // No cache buster needed

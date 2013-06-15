@@ -100,6 +100,7 @@ console.log('Listening to http://' + commandLineOptions.host + ':' + commandLine
 
 var server = require('../lib/createLiveStyleApp')({
     watchHtml: commandLineOptions.watchhtml,
+    watchImages: commandLineOptions.watchimages,
     dead: commandLineOptions.dead,
     debug: commandLineOptions.debug,
     root: root,
@@ -115,6 +116,7 @@ if (root && !commandLineOptions.dead) {
         root: root,
         mtime: commandLineOptions.mtime,
         watchfile: commandLineOptions.watchfile,
-        mappings: commandLineOptions.mappings
+        mappings: commandLineOptions.mappings,
+        watchCssImages: commandLineOptions.watchcssimages
     }, require('socket.io'));
 }
