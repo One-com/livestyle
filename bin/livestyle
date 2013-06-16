@@ -100,7 +100,7 @@ console.log('Listening to http://' + commandLineOptions.host + ':' + commandLine
 
 var server = require('../lib/createLiveStyleApp')({
     watchHtml: commandLineOptions.watchhtml,
-    watchImages: commandLineOptions.watchimages,
+    watchCssImages: commandLineOptions.watchcssimages,
     dead: commandLineOptions.dead,
     debug: commandLineOptions.debug,
     root: root,
