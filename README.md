@@ -172,3 +172,9 @@ Less.js
 style into the page by loading .less files and reworking the content
 to real CSS. Livestyle supports live updates using Less.js by
 refreshing all less stylesheets on the page.
+
+License
+-------
+
+LiveStyle is licensed under a standard 3-clause BSD license -- see the
+`LICENSE`-file for details.
