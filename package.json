@@ -39,5 +39,6 @@
     "scripts": {
         "prepublish": "vows"
     },
-    "preferGlobal": true
+    "preferGlobal": true,
+    "license": "BSD"
 }
