@@ -1,44 +1,44 @@
 {
-    "contributors": [
-        {
-            "name": "Peter Müller",
-            "email": "munter@fumle.dk"
-        },
-        {
-            "name": "Andreas Lind Petersen",
-            "email": "andreas@one.com"
-        }
-    ],
-    "name": "livestyle",
-    "description": "NodeJS middleware and binary for setting up a webserver that notifies the browser of CSS updates. Polling fallback for pure client side functionality.",
-    "version": "0.6.3",
-    "homepage": "https://github.com/One-com/livestyle",
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/One-com/livestyle.git"
+  "contributors": [
+    {
+      "name": "Peter Müller",
+      "email": "munter@fumle.dk"
     },
-    "engines": {
-        "node": ">= 0.4.0"
-    },
-    "dependencies": {
-        "express": "=3.1.2",
-        "express-compiless": "=0.3.3",
-        "express-hijackresponse": "=0.1.2",
-        "express-processimage": "=0.1.10",
-        "optimist": "=0.3.0",
-        "request": "=2.9.3",
-        "socket.io": "=0.9.14",
-        "socket.io-client": "=0.9.11"
-    },
-    "directories": {
-        "bin": "./bin"
-    },
-    "devDependencies": {
-        "vows": "=0.7.0"
-    },
-    "scripts": {
-        "prepublish": "vows"
-    },
-    "preferGlobal": true,
-    "license": "BSD"
+    {
+      "name": "Andreas Lind Petersen",
+      "email": "andreas@one.com"
+    }
+  ],
+  "name": "livestyle",
+  "description": "NodeJS middleware and binary for setting up a webserver that notifies the browser of CSS updates. Polling fallback for pure client side functionality.",
+  "version": "0.6.3",
+  "homepage": "https://github.com/One-com/livestyle",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/One-com/livestyle.git"
+  },
+  "engines": {
+    "node": ">= 0.4.0"
+  },
+  "dependencies": {
+    "express": "=3.1.2",
+    "express-compiless": "=0.3.3",
+    "express-hijackresponse": "=0.1.2",
+    "express-processimage": "=0.1.10",
+    "optimist": "=0.3.0",
+    "request": "=2.9.3",
+    "socket.io": "=0.9.14",
+    "socket.io-client": "=0.9.11"
+  },
+  "directories": {
+    "bin": "./bin"
+  },
+  "devDependencies": {
+    "vows": "=0.7.0"
+  },
+  "scripts": {
+    "prepublish": "vows"
+  },
+  "preferGlobal": true,
+  "license": "BSD"
 }
