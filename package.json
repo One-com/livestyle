@@ -37,7 +37,8 @@
     "vows": "=0.7.0"
   },
   "scripts": {
-    "prepublish": "vows"
+    "prepublish": "vows",
+    "travis": "vows --spec"
   },
   "preferGlobal": true,
   "license": "BSD"
