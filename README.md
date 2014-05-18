@@ -1,5 +1,8 @@
 Livestyle
 =========
+[![NPM version](https://badge.fury.io/js/livestyle.png)](http://badge.fury.io/js/livestyle)
+[![Build Status](https://travis-ci.org/One-com/livestyle.png?branch=master)](https://travis-ci.org/One-com/livestyle)
+[![Dependency Status](https://david-dm.org/One-com/livestyle.png)](https://david-dm.org/One-com/livestyle)
 
 Livestyle is a small web server that refreshes the stylesheets on your
 web sites live as you edit them.
