@@ -70,6 +70,21 @@ Compile less assets on-the-fly using <a
 href="https://github.com/papandreou/express-compiless">express-compiless</a>. Also
 supports watching @import'ed less assets.
 
+#### --autoprefixer
+
+add missing css vendor prefixes on the fly using
+[express-autoprefixer](https://github.com/gustavnikolaj/express-autoprefixer)
+
+If you only provide the flag with no value (like this:
+`--autoprefixer`) it will use the autoprefixer defaults.  '> 1%, last
+2 versions, Firefox ESR, Opera 12.1'.
+
+You can pass options as a string of supported browsers separated by comma. For syntax
+and valid options see the autoprefixer [projectpage](https://github.com/ai/autoprefixer).
+
+If you wish to support IE9 and the last 2 versions of every browser
+you should provide the options like this: `--autoprefixer "ie > 8, last 2 versions"`.
+
 #### --processimage
 
 Process images on the server according to the query string using using <a
