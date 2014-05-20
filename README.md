@@ -88,6 +88,13 @@ and valid options see the autoprefixer [projectpage](https://github.com/ai/autop
 If you wish to support IE9 and the last 2 versions of every browser
 you should provide the options like this: `--autoprefixer "ie > 8, last 2 versions"`.
 
+#### --jsxtransform
+
+If this value is set, JSX code (used in
+[facebook/react](https://github.com/facebook/react) will be compiled
+to javascript on the way out. Using
+[express-jsxtransform](https://github.com/gustavnikolaj/express-jsxtransform).
+
 #### --processimage
 
 Process images on the server according to the query string using using <a
