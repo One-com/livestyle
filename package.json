@@ -25,6 +25,7 @@
     "express-autoprefixer": "=0.0.6",
     "express-compiless": "=0.4.0",
     "express-hijackresponse": "=0.1.2",
+    "express-jsxtransform": "=0.0.1",
     "express-processimage": "=0.1.16",
     "optimist": "=0.3.0",
     "request": "=2.9.3",

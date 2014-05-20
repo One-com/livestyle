@@ -27,6 +27,11 @@ var express = require('express'),
         .options('autoprefixer', {
             describe: 'If this flag is set the express-autoprefixer middleware is added to the stack (adds missing vendor prefixes to text/css files). If will use the defaults from the autoprefixer module if you provide no options. You can provide options as a string. Fx: "ie > 8, last 2 versions".',
         })
+        .options('jsxtransform', {
+            type: 'boolean',
+            describe: 'Compile facebook React JSX to JS on the way out.',
+            default: false
+        })
         .options('processimage', {
             alias: 'processimages',
             type: 'boolean',
@@ -109,6 +114,7 @@ var server = require('../lib/createLiveStyleApp')({
     root: root,
     compiless: commandLineOptions.compiless,
     autoprefixer: commandLineOptions.autoprefixer,
+    jsxtransform: commandLineOptions.jsxtransform,
     processImage: commandLineOptions.processimage,
     mappings: mappings,
     proxy: commandLineOptions.proxy || null
