@@ -87,5 +87,36 @@ vows.describe('livestyle server in non-proxy mode').addBatch({
             assert.equal(response.statusCode, 200);
             assert.equal(body, 'The contents of /ba r/hello.txt\n');
         }
+    },
+    'create a livestyle server in non-proxy mode, request a less file, and autoprefix stuff in it': {
+        topic: function () {
+            var callback = this.callback,
+                appInfo = createLiveStyleTestServer({
+                    root: path.resolve(__dirname, 'compilessAutoprefixer'),
+                    autoprefixer: 'last 2 versions, ie > 8',
+                    compiless: true
+                });
+
+            // Wait a couple of seconds for the server to become available
+            setTimeout(function () {
+                request('http://127.0.0.1:' + appInfo.port + '/test.less', callback);
+            }, 2000);
+        },
+        'A CSS response with prefixes should be returned': function (err, response, body) {
+            assert.isNull(err);
+            assert.equal(response.statusCode, 200);
+            assert.equal(response.headers['content-type'], 'text/css');
+            assert.equal(body, [
+                '.nonNested {',
+                '  -webkit-animation-name: test;',
+                '  animation-name: test;',
+                '}',
+                '.nested .deep {',
+                '  -webkit-animation-name: test;',
+                '  animation-name: test;',
+                '}',
+                ''
+            ].join('\n'));
+        }
     }
 })['export'](module);
