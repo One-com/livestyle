@@ -40,6 +40,8 @@
     "bin": "./bin"
   },
   "devDependencies": {
+    "mocha": "=1.20.0",
+    "unexpected": "=3.2.0"
   },
   "scripts": {
     "prepublish": "vows",
