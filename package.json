@@ -40,7 +40,6 @@
     "bin": "./bin"
   },
   "devDependencies": {
-    "vows": "=0.7.0"
   },
   "scripts": {
     "prepublish": "vows",
