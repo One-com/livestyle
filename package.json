@@ -44,8 +44,8 @@
     "unexpected": "=3.2.0"
   },
   "scripts": {
-    "prepublish": "vows",
-    "travis": "vows --spec"
+    "prepublish": "mocha",
+    "travis": "mocha -R spec"
   },
   "preferGlobal": true,
   "license": "BSD"
