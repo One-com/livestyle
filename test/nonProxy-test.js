@@ -9,25 +9,20 @@ describe('livestyle server in non-proxy mode', function () {
     // create a livestyle server in non-proxy mode, then request an HTML file
     // An HTML response with the LiveStyle client should be returned
     it('should return an HTML response with the livestyle client injected', function (done) {
-        this.timeout(2500);
         var appInfo = createLiveStyleTestServer({
             root: path.resolve(__dirname, 'nonProxy')
         });
-        // Wait a couple of seconds for the server to become available
-        setTimeout(function () {
-            request('http://127.0.0.1:' + appInfo.port + '/', function (err, res, body) {
-                expect(err, 'to be null');
-                expect(res.statusCode, 'to be', 200);
-                expect(res.headers['content-type'], 'to match', /^text\/html[; ]/);
-                expect(body, 'to match', /<\/script><\/head>/);
-                done();
-            });
-        }, 2000);
+        request('http://127.0.0.1:' + appInfo.port + '/', function (err, res, body) {
+            expect(err, 'to be null');
+            expect(res.statusCode, 'to be', 200);
+            expect(res.headers['content-type'], 'to match', /^text\/html[; ]/);
+            expect(body, 'to match', /<\/script><\/head>/);
+            done();
+        });
     });
     // create a livestyle server in non-proxy mode, subscribe to changes in styles.css, then overwrite it
     // the list of changed file names should only contain styles.css (and at least twice)
     it('should notify subscribers about changes in css', function (done) {
-        this.timeout(6000);
         function getRandomColor() {
             return '#' + (0x100000 + Math.floor(0xefffff * Math.random())).toString(16);
         }
@@ -43,38 +38,34 @@ describe('livestyle server in non-proxy mode', function () {
             cssFileName = path.resolve(__dirname, 'nonProxy/style sheet.css'),
             changedFileNames = [];
 
-        // Wait a couple of seconds for the server to become available, then connect to it:
-        setTimeout(function () {
-            var socket = ioClient.connect('http://localhost:' + appInfo.port);
+        var socket = ioClient.connect('http://localhost:' + appInfo.port);
 
-            socket.on('connect', function () {
-                socket.emit('watch', ['/style%20sheet.css']);
-                socket.on('change', function (fileName) {
-                    changedFileNames.push(fileName);
-                });
-
-                // Wait a second, then overwrite the watched file:
-                setTimeout(function () {
-                    fs.writeFileSync(cssFileName, 'body {\n    background-color: ' + getRandomColor() + ';\n}\n', 'utf-8');
-
-                    // Wait another second, then reset the file to its original contents:
-                    setTimeout(function () {
-                        fs.writeFile(cssFileName, 'body {\n    background-color: red;\n}\n', 'utf-8', function () {
-                            // Wait another second and report back to the callback:
-                            setTimeout(function () {
-                                callback(changedFileNames);
-                            }, 1000);
-                        });
-                    }, 1000);
-                }, 1000);
+        socket.on('connect', function () {
+            socket.emit('watch', ['/style%20sheet.css']);
+            socket.on('change', function (fileName) {
+                changedFileNames.push(fileName);
             });
-        }, 2000);
+
+            // Wait a little, then overwrite the watched file:
+            setTimeout(function () {
+                fs.writeFileSync(cssFileName, 'body {\n    background-color: ' + getRandomColor() + ';\n}\n', 'utf-8');
+
+                // Wait a little, then reset the file to its original contents:
+                setTimeout(function () {
+                    fs.writeFile(cssFileName, 'body {\n    background-color: red;\n}\n', 'utf-8', function () {
+                        // Wait a little and report back to the callback:
+                        setTimeout(function () {
+                            callback(changedFileNames);
+                        }, 10);
+                    });
+                }, 10);
+            }, 10);
+        });
     });
     // create a livestyle server in non-proxy mode with a mapping from
     // /fo%20o/ to /ba%20r/, then request /fo%20o/hello.txt
     // The contents of /bar/hello.txt should be returned
     it('mapping from /fo%20/ to /ba%20r/', function (done) {
-        this.timeout(2500);
         var appInfo = createLiveStyleTestServer({
                 root: path.resolve(__dirname, 'nonProxy'),
                 mappings: {
@@ -82,20 +73,16 @@ describe('livestyle server in non-proxy mode', function () {
                 }
             });
 
-        // Wait a couple of seconds for the server to become available
-        setTimeout(function () {
-            request('http://127.0.0.1:' + appInfo.port + '/fo%20o/hello.txt', function (err, res, body) {
-                expect(err, 'to be null');
-                expect(res.statusCode, 'to be', 200);
-                expect(body, 'to be', 'The contents of /ba r/hello.txt\n');
-                done();
-            });
-        }, 2000);
+        request('http://127.0.0.1:' + appInfo.port + '/fo%20o/hello.txt', function (err, res, body) {
+            expect(err, 'to be null');
+            expect(res.statusCode, 'to be', 200);
+            expect(body, 'to be', 'The contents of /ba r/hello.txt\n');
+            done();
+        });
     });
     // create a livestyle server in non-proxy mode, request a less file, and autoprefix stuff in it
     // A CSS response with prefixes should be returned
     it('request a less file and autoprefix stuff in that', function (done) {
-        this.timeout(3000);
         var callback = this.callback,
         appInfo = createLiveStyleTestServer({
             root: path.resolve(__dirname, 'compilessAutoprefixer'),
@@ -103,25 +90,22 @@ describe('livestyle server in non-proxy mode', function () {
             compiless: true
         });
 
-        // Wait a couple of seconds for the server to become available
-        setTimeout(function () {
-            request('http://127.0.0.1:' + appInfo.port + '/test.less', function (err, res, body) {
-                expect(err, 'to be null');
-                expect(res.statusCode, 'to be', 200);
-                expect(res.headers['content-type'], 'to be', 'text/css');
-                expect(body, 'to be', [
-                    '.nonNested {',
-                    '  -webkit-animation-name: test;',
-                    '  animation-name: test;',
-                    '}',
-                    '.nested .deep {',
-                    '  -webkit-animation-name: test;',
-                    '  animation-name: test;',
-                    '}',
-                    ''
-                ].join('\n'));
-                done();
-            });
-        }, 2000);
+        request('http://127.0.0.1:' + appInfo.port + '/test.less', function (err, res, body) {
+            expect(err, 'to be null');
+            expect(res.statusCode, 'to be', 200);
+            expect(res.headers['content-type'], 'to be', 'text/css');
+            expect(body, 'to be', [
+                '.nonNested {',
+                '  -webkit-animation-name: test;',
+                '  animation-name: test;',
+                '}',
+                '.nested .deep {',
+                '  -webkit-animation-name: test;',
+                '  animation-name: test;',
+                '}',
+                ''
+            ].join('\n'));
+            done();
+        });
     });
 });
