@@ -12,7 +12,6 @@ describe('livestyle server in proxy mode', function () {
     // the HTML file should be patched with the bootstrapper right
     // before </head>
     it('should inject the livestyle client in a document', function (done) {
-        this.timeout(2500);
         var root = path.resolve(__dirname, 'proxy'),
             upstreamApp = express().use(express['static'](root)),
             upstreamServer = upstreamApp.listen(0),
@@ -21,21 +20,17 @@ describe('livestyle server in proxy mode', function () {
                 proxy: upstreamServerUrl
             });
 
-        // Wait a couple of seconds for the servers to become available
-        setTimeout(function () {
-            request({method: 'GET', url: 'http://127.0.0.1:' + appInfo.port + '/'}, function (err, res, body) {
-                expect(err, 'to be null');
-                expect(body, 'to match', /<\/script><\/head>/);
-                done();
-            });
-        }, 2000);
+        request({method: 'GET', url: 'http://127.0.0.1:' + appInfo.port + '/'}, function (err, res, body) {
+            expect(err, 'to be null');
+            expect(body, 'to match', /<\/script><\/head>/);
+            done();
+        });
     });
     // create a livestyle server in pure proxy mode and an upstream
     // server, then request an HTML file with no </head>
     // the HTML file should be patched with the bootstrapper right
     // before </html>
     it('inject the client into a headless file', function (done) {
-        this.timeout(2500);
         var root = path.resolve(__dirname, 'proxy'),
             upstreamApp = express().use(express['static'](root)),
             upstreamServer = upstreamApp.listen(0),
@@ -44,17 +39,14 @@ describe('livestyle server in proxy mode', function () {
                 proxy: upstreamServerUrl
             });
 
-        // Wait a couple of seconds for the servers to become available
-        setTimeout(function () {
-            request({
-                method: 'GET',
-                url: 'http://127.0.0.1:' + appInfo.port + '/nohead.html'
-            }, function (err, res, body) {
-                expect(err, 'to be null');
-                expect(body, 'to match', /<\/script><\/html>/);
-                done();
-            });
-        }, 2000);
+        request({
+            method: 'GET',
+            url: 'http://127.0.0.1:' + appInfo.port + '/nohead.html'
+        }, function (err, res, body) {
+            expect(err, 'to be null');
+            expect(body, 'to match', /<\/script><\/html>/);
+            done();
+        });
     });
     // create a livestyle server in pure proxy mode and an upstream
     // server, then request an HTML file with no </head> and no
@@ -62,7 +54,6 @@ describe('livestyle server in proxy mode', function () {
     // the HTML file should be patched with the bootstrapper at the
     // end
     it('inject the client into increasingly bad html', function (done) {
-        this.timeout(2500);
         var root = path.resolve(__dirname, 'proxy'),
             upstreamApp = express().use(express['static'](root)),
             upstreamServer = upstreamApp.listen(0),
@@ -71,17 +62,14 @@ describe('livestyle server in proxy mode', function () {
                 proxy: upstreamServerUrl
             });
 
-        // Wait a couple of seconds for the servers to become available
-        setTimeout(function () {
-            request({
-                method: 'GET',
-                url: 'http://127.0.0.1:' + appInfo.port + '/noheadnoendhtml.html'
-            }, function (err, res, body) {
-                expect(err, 'to be null');
-                expect(body, 'to match', /<\/script>$/);
-                done();
-            });
-        }, 2000);
+        request({
+            method: 'GET',
+            url: 'http://127.0.0.1:' + appInfo.port + '/noheadnoendhtml.html'
+        }, function (err, res, body) {
+            expect(err, 'to be null');
+            expect(body, 'to match', /<\/script>$/);
+            done();
+        });
     });
     // create a livestyle server in pure proxy mode and an upstream
     // server that redirects /subdir to /subdir/, then request a
@@ -89,7 +77,6 @@ describe('livestyle server in proxy mode', function () {
     // the response should be an 301 pointing at /subdir/ on the
     // LiveStyle server
     it('proxy redirects correctly', function (done) {
-        this.timeout(2500);
         var root = path.resolve(__dirname, 'proxy'),
             upstreamServerUrl,
             upstreamApp = express()
@@ -109,31 +96,27 @@ describe('livestyle server in proxy mode', function () {
 
         var appInfo = createLiveStyleTestServer({proxy: upstreamServerUrl});
 
-        // Wait a couple of seconds for the servers to become available
-        setTimeout(function () {
-            request({
-                method: 'GET',
-                followRedirect: false,
-                url: 'http://127.0.0.1:' + appInfo.port + '/subdir'
-            }, function (err, res, body) {
-                expect(err, 'to be null');
-                expect(res.statusCode, 'to be', 301);
-                // Accept both and absolute and a relative Location header:
-                expect(
-                    res.headers.location,
-                    'to match',
-                    /^(?:http:\/\/127\.0\.0\.1:' + appInfo.port + ')?\/subdir\//
-                );
-                done();
-            });
-        }, 2000);
+        request({
+            method: 'GET',
+            followRedirect: false,
+            url: 'http://127.0.0.1:' + appInfo.port + '/subdir'
+        }, function (err, res, body) {
+            expect(err, 'to be null');
+            expect(res.statusCode, 'to be', 301);
+            // Accept both and absolute and a relative Location header:
+            expect(
+                res.headers.location,
+                'to match',
+                /^(?:http:\/\/127\.0\.0\.1:' + appInfo.port + ')?\/subdir\//
+            );
+            done();
+        });
     });
     // create a livestyle server with a mapping from /fo%20o/ to
     // /ba%20r/ along with an upstream server, then request
     // /fo%20o/hello.txt
     // the contents of /ba r/hello.txt should be served
     it('proxy mappings', function (done) {
-        this.timeout(2500);
         var root = path.resolve(__dirname, 'proxy'),
             upstreamApp = express().use(express['static'](root)),
             upstreamServer = upstreamApp.listen(0),
@@ -145,13 +128,10 @@ describe('livestyle server in proxy mode', function () {
                 }
             });
 
-        // Wait a couple of seconds for the servers to become available
-        setTimeout(function () {
-            request('http://127.0.0.1:' + appInfo.port + '/fo%20o/hello.txt', function (err, res, body) {
-                expect(err, 'to be null');
-                expect(body, 'to be', 'The contents of /ba r/hello.txt\n');
-                done();
-            });
-        }, 2000);
+        request('http://127.0.0.1:' + appInfo.port + '/fo%20o/hello.txt', function (err, res, body) {
+            expect(err, 'to be null');
+            expect(body, 'to be', 'The contents of /ba r/hello.txt\n');
+            done();
+        });
     });
 });
