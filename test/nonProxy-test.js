@@ -27,14 +27,7 @@ describe('livestyle server in non-proxy mode', function () {
             return '#' + (0x100000 + Math.floor(0xefffff * Math.random())).toString(16);
         }
 
-        var callback = function (changedFileNames) {
-                expect(changedFileNames.length, 'to be greater than', 2);
-                expect(changedFileNames, 'to be an array whose items satisfy', function (item) {
-                    expect(item, 'to be', '/style%20sheet.css');
-                });
-                done();
-            },
-            appInfo = createLiveStyleTestServer({root: path.resolve(__dirname, 'nonProxy')}),
+        var appInfo = createLiveStyleTestServer({root: path.resolve(__dirname, 'nonProxy')}),
             cssFileName = path.resolve(__dirname, 'nonProxy/style sheet.css'),
             changedFileNames = [];
 
@@ -46,20 +39,18 @@ describe('livestyle server in non-proxy mode', function () {
                 changedFileNames.push(fileName);
             });
 
-            // Wait a little, then overwrite the watched file:
+            // Wait a little, then overwrite the watched file twice:
             setTimeout(function () {
-                fs.writeFileSync(cssFileName, 'body {\n    background-color: ' + getRandomColor() + ';\n}\n', 'utf-8');
-
-                // Wait a little, then reset the file to its original contents:
-                setTimeout(function () {
+                fs.writeFile(cssFileName, 'body {\n    background-color: ' + getRandomColor() + ';\n}\n', 'utf-8', function () {
                     fs.writeFile(cssFileName, 'body {\n    background-color: red;\n}\n', 'utf-8', function () {
-                        // Wait a little and report back to the callback:
-                        setTimeout(function () {
-                            callback(changedFileNames);
-                        }, 10);
+                        expect(changedFileNames.length, 'to be greater than', 2);
+                        expect(changedFileNames, 'to be an array whose items satisfy', function (item) {
+                            expect(item, 'to be', '/style%20sheet.css');
+                        });
+                        done();
                     });
-                }, 10);
-            }, 10);
+                });
+            }, 100);
         });
     });
     // create a livestyle server in non-proxy mode with a mapping from
