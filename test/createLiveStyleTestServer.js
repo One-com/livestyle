@@ -3,6 +3,8 @@ var createLiveStyleApp = require('../lib/createLiveStyleApp');
 module.exports = function createLiveStyleTestServer(options) {
     var app = createLiveStyleApp(options);
 
+    options.silentSocketIo = true;
+
     // Listen on a vacant TCP port and hand back the url + app
     var server = app.listen(0);
 

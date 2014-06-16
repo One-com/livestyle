@@ -40,11 +40,13 @@
     "bin": "./bin"
   },
   "devDependencies": {
-    "vows": "=0.7.0"
+    "mocha": "=1.20.0",
+    "unexpected": "=3.2.0"
   },
   "scripts": {
-    "prepublish": "vows",
-    "travis": "vows --spec"
+    "test": "mocha",
+    "prepublish": "mocha",
+    "travis": "mocha -R spec"
   },
   "preferGlobal": true,
   "license": "BSD"
