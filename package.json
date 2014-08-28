@@ -30,7 +30,7 @@
     "express-compiless": "0.5.0",
     "express-hijackresponse": "=0.1.2",
     "express-jsxtransform": "0.1.0",
-    "express-processimage": "=0.1.16",
+    "express-processimage": "0.1.22",
     "optimist": "=0.3.0",
     "request": "=2.9.3",
     "socket.io": "=0.9.14",
