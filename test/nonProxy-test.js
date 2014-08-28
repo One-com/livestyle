@@ -77,7 +77,7 @@ describe('livestyle server in non-proxy mode', function () {
         var callback = this.callback,
         appInfo = createLiveStyleTestServer({
             root: path.resolve(__dirname, 'compilessAutoprefixer'),
-            autoprefixer: 'last 2 versions, ie > 8',
+            autoprefixer: { browsers: ['last 2 versions', 'ie > 8'], cascade: false },
             compiless: true
         });
 
