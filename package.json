@@ -29,7 +29,7 @@
     "express-autoprefixer": "2.1.0",
     "express-compiless": "=0.4.0",
     "express-hijackresponse": "=0.1.2",
-    "express-jsxtransform": "=0.0.2",
+    "express-jsxtransform": "0.1.0",
     "express-processimage": "=0.1.16",
     "optimist": "=0.3.0",
     "request": "=2.9.3",
