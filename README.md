@@ -76,7 +76,7 @@ supports watching @import'ed less assets.
 #### --compilesass
 
 Compile sass assets on-the-fly using <a
-href="https://github.com/unter/express-compile-sass">express-compile-sass</a>. Also
+href="https://github.com/Munter/express-compile-sass">express-compile-sass</a>. Also
 supports watching @import'ed sass assets.
 
 #### --autoprefixer
