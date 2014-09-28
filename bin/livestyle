@@ -24,6 +24,11 @@ var express = require('express'),
             describe: 'Whether to add the express-compiless middleware to the stack (compiles less files and serves it them as text/css).',
             default: false
         })
+        .options('compilesass', {
+            type: 'boolean',
+            describe: 'Whether to add the express-compile-sass middleware to the stack (compiles scss files and serves it them as text/css).',
+            default: false
+        })
         .options('autoprefixer', {
             describe: 'If this flag is set the express-autoprefixer middleware is added to the stack (adds missing vendor prefixes to text/css files). If will use the defaults from the autoprefixer module if you provide no options. You can provide options as a string. Fx: "ie > 8, last 2 versions".',
         })
@@ -113,6 +118,7 @@ var server = require('../lib/createLiveStyleApp')({
     debug: commandLineOptions.debug,
     root: root,
     compiless: commandLineOptions.compiless,
+    compilesass: commandLineOptions.compilesass,
     autoprefixer: commandLineOptions.autoprefixer,
     jsxtransform: commandLineOptions.jsxtransform,
     processImage: commandLineOptions.processimage,
