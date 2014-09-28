@@ -73,6 +73,12 @@ Compile less assets on-the-fly using <a
 href="https://github.com/papandreou/express-compiless">express-compiless</a>. Also
 supports watching @import'ed less assets.
 
+#### --compilesass
+
+Compile sass assets on-the-fly using <a
+href="https://github.com/unter/express-compile-sass">express-compile-sass</a>. Also
+supports watching @import'ed sass assets.
+
 #### --autoprefixer
 
 add missing css vendor prefixes on the fly using
