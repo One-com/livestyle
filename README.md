@@ -174,6 +174,35 @@ These two loaders are both usable without livestyle.
 The less.js loader will change behavior depending on wether you have
 set the `--compiless` flag for livestyle to make live updates possible.
 
+Help! fs.watch throws ENOSPC errors!
+====================================
+
+You are hitting the limit of inotify watchers on your system. To
+remedy this, you can increase the limit. On modern computers it should
+not be worsening the performance significantly.
+
+To check what your current limit is run:
+```
+$ cat /proc/sys/fs/inotify/max_user_watches
+```
+
+It should generally be safe to just double that if you see this error.
+
+```
+$ echo 16384 > /proc/sys/fs/inotify/max_user_watches
+```
+
+You will need to run the above command with super user privileges.
+
+To make the change permanent you can add the following line to the
+/etc/sysctl.conf file.
+
+```
+fs.inotify.max_user_watches=16384
+```
+
+This solution is assuming you are running Debian.
+
 
 CSS preprocessors
 =================
