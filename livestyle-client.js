@@ -88,6 +88,30 @@
                 i,
                 href;
 
+            function eachCssRule(stylesheet, callback) {
+                var cssRules = styleSheet.rules || styleSheet.cssRules; // IE8 and below use .rules
+
+                if (cssRules) {
+                    for (var j = 0 ; j < cssRules.length ; j += 1) {
+                        callback(cssRules[j]);
+                    }
+                }
+            }
+
+            function eachStyleDeclaration(cssRule, callback) {
+                // Style rule
+                if (cssRule.type === 1) {
+                    callback(cssRule.style);
+                }
+
+                // Media blocks
+                if (cssRule.type === 4) {
+                    eachCssRule(cssRule, function (cssRule) {
+                        eachStyleDeclaration(cssRule, callback);
+                    });
+                }
+            }
+
             // Link tags with rel="stylesheet"
             for (i = 0; i < links.length; i += 1) {
                 if (/\bstylesheet\b/i.test(links[i].getAttribute('rel'))) {
@@ -101,35 +125,30 @@
             for (i = 0 ; i < document.styleSheets.length ; i += 1) {
                 var styleSheet = document.styleSheets[i],
                     ownerNode = styleSheet.owningElement || styleSheet.ownerNode;
+
                 if (styleSheet.href) {
-                    var cssRules = styleSheet.rules || styleSheet.cssRules; // IE8 and below use .rules
-                    if (cssRules) {
-                        for (var j = 0 ; j < cssRules.length ; j += 1) {
-                            cssRule = cssRules[j];
-                            // Look for .compilessinclude {src: url(...);} in non-inline stylesheets:
-                            if (/^\.compilessinclude$/.test(cssRule.selectorText)) {
-                                var backgroundImage = cssRule.style.backgroundImage || (cssRule.style.getPropertyValue && cssRule.style.getPropertyValue('background-image')) || cssRule.style.cssText,
-                                    matchBackgroundImage = backgroundImage && backgroundImage.match(/url\((['"]|)(.*?)\1\)/);
-                                if (matchBackgroundImage) {
-                                    href = cleanHref(styleSheet.href);
-                                    var backgroundImageUrl = URI(matchBackgroundImage[2]).absoluteTo(ownerNode.getAttribute('href')).absoluteTo(location.href).toString(),
-                                        watchHref = cleanHref(backgroundImageUrl);
-                                    if (href && watchHref) {
-                                        cssIncludes.push({type: 'link', href: href, watchHref: watchHref, node: ownerNode});
-                                    }
+                    eachCssRule(styleSheet, function (cssRule) {
+                        // Look for .compilessinclude {src: url(...);} in non-inline stylesheets:
+                        if (/^\.compilessinclude$/.test(cssRule.selectorText)) {
+                            var backgroundImage = cssRule.style.backgroundImage || (cssRule.style.getPropertyValue && cssRule.style.getPropertyValue('background-image')) || cssRule.style.cssText,
+                                matchBackgroundImage = backgroundImage && backgroundImage.match(/url\((['"]|)(.*?)\1\)/);
+                            if (matchBackgroundImage) {
+                                href = cleanHref(styleSheet.href);
+                                var backgroundImageUrl = URI(matchBackgroundImage[2]).absoluteTo(ownerNode.getAttribute('href')).absoluteTo(location.href).toString(),
+                                    watchHref = cleanHref(backgroundImageUrl);
+                                if (href && watchHref) {
+                                    cssIncludes.push({type: 'link', href: href, watchHref: watchHref, node: ownerNode});
                                 }
                             }
                         }
-                    }
+                    });
                 }
+
                 if (liveStyleOptions.watchCssImages) {
-                    var baseUrl = styleSheet.href || location.href,
-                        cssRules = styleSheet.rules || styleSheet.cssRules; // IE8 and below use .rules
-                    if (cssRules) {
-                        for (var j = 0 ; j < cssRules.length ; j += 1) {
-                            cssRule = cssRules[j];
-                            // Look for .compilessinclude {src: url(...);} in non-inline stylesheets:
-                            style = cssRule.style;
+                    var baseUrl = styleSheet.href || location.href;
+
+                    eachCssRule(styleSheet, function (cssRule) {
+                        eachStyleDeclaration(cssRule, function (style) {
                             for (var k = 0 ; k < style.length ; k += 1) {
                                 var propertyName = style[k],
                                     value = style[propertyName],
@@ -143,8 +162,8 @@
                                     }
                                 }
                             }
-                        }
-                    }
+                        });
+                    });
                 }
             }
 
