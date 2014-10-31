@@ -25,21 +25,23 @@
     "node": ">= 0.4.0"
   },
   "dependencies": {
-    "express": "=3.1.2",
+    "errorhandler": "1.2.2",
+    "express": "4.10.1",
     "express-autoprefixer": "2.1.0",
-    "express-compile-sass": "^1.0.0",
+    "express-compile-sass": "1.0.0",
     "express-compiless": "0.5.0",
-    "express-hijackresponse": "=0.1.2",
+    "express-hijackresponse": "=0.2.1",
     "express-jsxtransform": "0.1.0",
     "express-processimage": "0.1.22",
-    "optimist": "=0.3.0",
-    "request": "=2.9.3",
-    "socket.io": "=0.9.14",
-    "socket.io-client": "=0.9.11"
+    "optimist": "0.3.0",
+    "request": "2.9.3",
+    "socket.io": "0.9.14",
+    "socket.io-client": "0.9.11"
   },
   "directories": {
     "bin": "./bin"
   },
+  "main": ".lib/createLiveStyleApp",
   "devDependencies": {
     "mocha": "=1.20.0",
     "unexpected": "=3.2.0"
