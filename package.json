@@ -33,6 +33,7 @@
     "express-hijackresponse": "=0.2.1",
     "express-jsxtransform": "0.1.0",
     "express-processimage": "0.1.22",
+    "morgan": "^1.4.1",
     "optimist": "0.3.0",
     "request": "2.9.3",
     "socket.io": "0.9.14",
