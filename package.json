@@ -49,6 +49,13 @@
     "prepublish": "mocha",
     "travis": "mocha -R spec"
   },
+  "files": [
+    "livestyle-client.js",
+    "css.js",
+    "less.js",
+    "lib",
+    "bin"
+  ],
   "preferGlobal": true,
   "license": "BSD"
 }
