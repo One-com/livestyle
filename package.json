@@ -49,7 +49,6 @@
   },
   "scripts": {
     "test": "mocha",
-    "prepublish": "mocha",
     "travis": "mocha -R spec"
   },
   "files": [
