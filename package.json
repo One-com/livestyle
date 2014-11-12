@@ -28,7 +28,7 @@
     "errorhandler": "1.2.2",
     "express": "4.10.1",
     "express-autoprefixer": "2.1.0",
-    "express-compile-sass": "2.0.0",
+    "express-compile-sass": "2.0.1",
     "express-compiless": "0.5.0",
     "express-hijackresponse": "0.2.1",
     "express-jsxtransform": "1.1.0",
