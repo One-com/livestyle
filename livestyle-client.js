@@ -67,7 +67,7 @@
             }
 
             // Normalize to be root relative:
-            href = href.replace(local, '').replace(/\?.*$/, '');
+            href = href.replace(local, '/').replace(/\?.*$/, '');
             if (!/^\//.test(href)) {
                 href = location.pathname.replace(/[^\/]+$/, '') + href;
             }
