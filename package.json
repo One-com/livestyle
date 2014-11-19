@@ -45,6 +45,7 @@
   "main": ".lib/createLiveStyleApp",
   "devDependencies": {
     "mocha": "=1.20.0",
+    "node-sass": "^1.2.3",
     "unexpected": "=3.2.0"
   },
   "scripts": {
