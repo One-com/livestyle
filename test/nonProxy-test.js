@@ -99,4 +99,26 @@ describe('livestyle server in non-proxy mode', function () {
             done();
         });
     });
+    // create a livestyle server in non-proxy mode, request a sass file
+    // A CSS response should be returned
+    it('should compile a scss file to css', function (done) {
+        var callback = this.callback,
+        appInfo = createLiveStyleTestServer({
+            root: path.resolve(__dirname, 'middlewares'),
+            compilesass: true
+        });
+
+        request(appInfo.url + '/main.scss', function (err, res, body) {
+            expect(err, 'to be null');
+            expect(res.statusCode, 'to be', 200);
+            expect(res.headers['content-type'], 'to contain', 'text/css');
+            expect(body, 'to be', [
+                'body {',
+                '  background: blue;',
+                '  transform: translateZ(2); }',
+                '',
+            ].join('\n'));
+            done();
+        });
+    });
 });
