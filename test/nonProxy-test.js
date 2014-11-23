@@ -1,3 +1,4 @@
+/*global describe,it*/
 var createLiveStyleTestServer = require('./createLiveStyleTestServer'),
     expect = require('unexpected'),
     fs = require('fs'),
@@ -74,8 +75,7 @@ describe('livestyle server in non-proxy mode', function () {
     // create a livestyle server in non-proxy mode, request a less file, and autoprefix stuff in it
     // A CSS response with prefixes should be returned
     it('request a less file and autoprefix stuff in that', function (done) {
-        var callback = this.callback,
-        appInfo = createLiveStyleTestServer({
+        var appInfo = createLiveStyleTestServer({
             root: path.resolve(__dirname, 'compilessAutoprefixer'),
             autoprefixer: { browsers: ['last 2 versions', 'ie > 8'], cascade: false },
             compiless: true
@@ -103,8 +103,7 @@ describe('livestyle server in non-proxy mode', function () {
     // create a livestyle server in non-proxy mode, request a sass file
     // A CSS response should be returned
     it('should compile a scss file to css', function (done) {
-        var callback = this.callback,
-        appInfo = createLiveStyleTestServer({
+        var appInfo = createLiveStyleTestServer({
             root: path.resolve(__dirname, 'middlewares'),
             compilesass: true
         });
@@ -126,8 +125,7 @@ describe('livestyle server in non-proxy mode', function () {
     // create a livestyle server in non-proxy mode, request a sass file and autoprefix the result
     // A CSS response with prefixes should be returned
     it('should compile a scss file to css and autoprefix the response', function (done) {
-        var callback = this.callback,
-        appInfo = createLiveStyleTestServer({
+        var appInfo = createLiveStyleTestServer({
             root: path.resolve(__dirname, 'middlewares'),
             autoprefixer: { browsers: ['last 30 versions'], cascade: false },
             compilesass: true
