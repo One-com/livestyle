@@ -176,4 +176,28 @@ describe('livestyle server in non-proxy mode', function () {
             done();
         });
     });
+
+    it('should not throw when serving html through autoprefixer and injectLiveStyleScriptIncludeIntoHtml', function (done) {
+        var express = require('express');
+        var injector = require('../lib/middleware/injectLiveStyleScriptIncludeIntoHtml');
+        var autoprefixer = require('express-autoprefixer');
+        var root = path.resolve(__dirname, 'middlewares');
+
+        var app = express();
+
+        app.use(injector());
+        app.use(autoprefixer({ browsers: ['last 30 versions'], cascade: false }));
+        app.use(express['static'](root));
+
+        var server = app.listen(0);
+        var info = server.address();
+
+        request('http://' + info.address + ':' + info.port + '/index.html', function (err, res, body) {
+            expect(err, 'to be null');
+            expect(res.statusCode, 'to be', 200);
+            expect(res.headers['content-type'], 'to contain', 'text/html');
+            expect(body, 'to contain', '<!DOCTYPE html>');
+            done();
+        });
+    });
 });
