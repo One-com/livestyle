@@ -114,7 +114,7 @@ describe('livestyle server in non-proxy mode', function () {
             expect(res.statusCode, 'to be', 200);
             expect(res.headers['content-type'], 'to contain', 'text/css');
             expect(body, 'to be', [
-                'body {',
+                '.scss {',
                 '  background: blue;',
                 '  transform: translateZ(2); }',
                 '',
@@ -138,7 +138,7 @@ describe('livestyle server in non-proxy mode', function () {
             expect(res.statusCode, 'to be', 200);
             expect(res.headers['content-type'], 'to contain', 'text/css');
             expect(body, 'to be', [
-                'body {',
+                '.scss {',
                 '  background: blue;',
                 '  -webkit-transform: translateZ(2);',
                 '  -moz-transform: translateZ(2);',
