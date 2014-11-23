@@ -146,4 +146,34 @@ describe('livestyle server in non-proxy mode', function () {
             done();
         });
     });
+
+    it('should serve html correctly with sass compiler active', function (done) {
+        var appInfo = createLiveStyleTestServer({
+            root: path.resolve(__dirname, 'middlewares'),
+            compilesass: true
+        });
+
+        request(appInfo.url + '/index.html', function (err, res, body) {
+            expect(err, 'to be null');
+            expect(res.statusCode, 'to be', 200);
+            expect(res.headers['content-type'], 'to contain', 'text/html');
+            expect(body, 'to contain', '<!DOCTYPE html>');
+            done();
+        });
+    });
+
+    it('should serve html correctly with autoprefixer active', function (done) {
+        var appInfo = createLiveStyleTestServer({
+            root: path.resolve(__dirname, 'middlewares'),
+            autoprefixer: { browsers: ['last 30 versions'], cascade: false },
+        });
+
+        request(appInfo.url + '/index.html', function (err, res, body) {
+            expect(err, 'to be null');
+            expect(res.statusCode, 'to be', 200);
+            expect(res.headers['content-type'], 'to contain', 'text/html');
+            expect(body, 'to contain', '<!DOCTYPE html>');
+            done();
+        });
+    });
 });
