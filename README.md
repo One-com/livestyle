@@ -27,6 +27,8 @@ editor. Effective use cases spotted so far:
 * Testing several media queries at the same time with different
   devices or browser window sizes.
 
+If you are looking for a grunt task doing the same, take a look at [grunt-livestyle](https://github.com/Munter/grunt-livestyle).
+
 Usage
 =====
 Livestyle installs an executable script on your system called `livestyle`.
