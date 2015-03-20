@@ -27,6 +27,25 @@ describe('livestyle server in proxy mode', function () {
         });
     });
     // create a livestyle server in pure proxy mode and an upstream
+    // server, then request an HTML file
+    // the HTML file should be patched with the bootstrapper right
+    // before </script>
+    it('should inject the livestyle client in a document before first script tag', function (done) {
+        var root = path.resolve(__dirname, 'proxy'),
+            upstreamApp = express().use(express['static'](root)),
+            upstreamServer = upstreamApp.listen(0),
+            upstreamServerUrl = 'http://127.0.0.1:' + upstreamServer.address().port + '/',
+            appInfo = createLiveStyleTestServer({
+                proxy: upstreamServerUrl
+            });
+
+        request({method: 'GET', url: 'http://127.0.0.1:' + appInfo.port + '/earlyscript.html'}, function (err, res, body) {
+            expect(err, 'to be null');
+            expect(body, 'to match', /<\/script><script id="earlyscript">/);
+            done();
+        });
+    });
+    // create a livestyle server in pure proxy mode and an upstream
     // server, then request an HTML file with no </head>
     // the HTML file should be patched with the bootstrapper right
     // before </html>
