@@ -60,5 +60,5 @@
     "bin"
   ],
   "preferGlobal": true,
-  "license": "BSD"
+  "license": "BSD-3-Clause"
 }
