@@ -5,7 +5,7 @@
       "email": "munter@fumle.dk"
     },
     {
-      "name": "Andreas Lind Petersen",
+      "name": "Andreas Lind",
       "email": "andreas@one.com"
     },
     {
@@ -44,9 +44,9 @@
   },
   "main": ".lib/createLiveStyleApp",
   "devDependencies": {
-    "mocha": "=1.20.0",
+    "mocha": "1.20.0",
     "node-sass": "^1.2.3",
-    "unexpected": "=3.2.0"
+    "unexpected": "3.2.0"
   },
   "scripts": {
     "test": "mocha",
