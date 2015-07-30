@@ -108,7 +108,7 @@ describe('livestyle server in non-proxy mode', function () {
             compilesass: true
         });
 
-        request(appInfo.url + '/main.scss', function (err, res, body) {
+        request('http://127.0.0.1:' + appInfo.port + '/main.scss', function (err, res, body) {
             expect(err, 'to be null');
             expect(res.statusCode, 'to be', 200);
             expect(res.headers['content-type'], 'to contain', 'text/css');
@@ -131,7 +131,7 @@ describe('livestyle server in non-proxy mode', function () {
             compilesass: true
         });
 
-        request(appInfo.url + '/main.scss', function (err, res, body) {
+        request('http://127.0.0.1:' + appInfo.port + '/main.scss', function (err, res, body) {
             expect(err, 'to be null');
             expect(res.statusCode, 'to be', 200);
             expect(res.headers['content-type'], 'to contain', 'text/css');
@@ -153,7 +153,7 @@ describe('livestyle server in non-proxy mode', function () {
             compilesass: true
         });
 
-        request(appInfo.url + '/index.html', function (err, res, body) {
+        request('http://127.0.0.1:' + appInfo.port + '/index.html', function (err, res, body) {
             expect(err, 'to be null');
             expect(res.statusCode, 'to be', 200);
             expect(res.headers['content-type'], 'to contain', 'text/html');
@@ -168,7 +168,7 @@ describe('livestyle server in non-proxy mode', function () {
             autoprefixer: { browsers: ['last 30 versions'], cascade: false },
         });
 
-        request(appInfo.url + '/index.html', function (err, res, body) {
+        request('http://127.0.0.1:' + appInfo.port + '/index.html', function (err, res, body) {
             expect(err, 'to be null');
             expect(res.statusCode, 'to be', 200);
             expect(res.headers['content-type'], 'to contain', 'text/html');
@@ -192,7 +192,7 @@ describe('livestyle server in non-proxy mode', function () {
         var server = app.listen(0);
         var info = server.address();
 
-        request('http://' + info.address + ':' + info.port + '/index.html', function (err, res, body) {
+        request('http://127.0.0.1:' + info.port + '/index.html', function (err, res, body) {
             expect(err, 'to be null');
             expect(res.statusCode, 'to be', 200);
             expect(res.headers['content-type'], 'to contain', 'text/html');
