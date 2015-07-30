@@ -1,9 +1,7 @@
 var createLiveStyleTestServer = require('./createLiveStyleTestServer'),
     expect = require('unexpected'),
-    fs = require('fs'),
     path = require('path'),
     express = require('express'),
-    ioClient = require('socket.io-client'),
     request = require('request');
 
 describe('livestyle server in proxy mode', function () {
