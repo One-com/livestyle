@@ -1,6 +1,6 @@
 /*global describe,it*/
 var createLiveStyleTestServer = require('./createLiveStyleTestServer'),
-    expect = require('unexpected'),
+    expect = require('unexpected').clone().installPlugin(require('unexpected-express')),
     fs = require('fs'),
     path = require('path'),
     ioClient = require('socket.io-client'),
@@ -9,16 +9,20 @@ var createLiveStyleTestServer = require('./createLiveStyleTestServer'),
 describe('livestyle server in non-proxy mode', function () {
     // create a livestyle server in non-proxy mode, then request an HTML file
     // An HTML response with the LiveStyle client should be returned
-    it('should return an HTML response with the livestyle client injected', function (done) {
+    it('should return an HTML response with the livestyle client injected', function () {
         var appInfo = createLiveStyleTestServer({
             root: path.resolve(__dirname, 'nonProxy')
         });
-        request('http://127.0.0.1:' + appInfo.port + '/', function (err, res, body) {
-            expect(err, 'to be null');
-            expect(res.statusCode, 'to be', 200);
-            expect(res.headers['content-type'], 'to match', /^text\/html[; ]/);
-            expect(body, 'to match', /<\/script><\/head>/);
-            done();
+
+        return expect(appInfo.app, 'to yield exchange', {
+          request: '/',
+          response: {
+            statusCode: 200,
+            headers: {
+              'Content-Type': /^text\/html[; ]/
+            },
+            body: /<\/script><\/head>/
+          }
         });
     });
     // create a livestyle server in non-proxy mode, subscribe to changes in styles.css, then overwrite it
@@ -57,7 +61,7 @@ describe('livestyle server in non-proxy mode', function () {
     // create a livestyle server in non-proxy mode with a mapping from
     // /fo%20o/ to /ba%20r/, then request /fo%20o/hello.txt
     // The contents of /bar/hello.txt should be returned
-    it('mapping from /fo%20/ to /ba%20r/', function (done) {
+    it('mapping from /fo%20/ to /ba%20r/', function () {
         var appInfo = createLiveStyleTestServer({
                 root: path.resolve(__dirname, 'nonProxy'),
                 mappings: {
@@ -65,60 +69,71 @@ describe('livestyle server in non-proxy mode', function () {
                 }
             });
 
-        request('http://127.0.0.1:' + appInfo.port + '/fo%20o/hello.txt', function (err, res, body) {
-            expect(err, 'to be null');
-            expect(res.statusCode, 'to be', 200);
-            expect(body, 'to be', 'The contents of /ba r/hello.txt\n');
-            done();
+        return expect(appInfo.app, 'to yield exchange', {
+          request: '/fo%20o/hello.txt',
+          response: {
+            statusCode: 200,
+            headers: {
+              'Content-Type': /^text\/plain[; ]/
+            },
+            body: 'The contents of /ba r/hello.txt\n'
+          }
         });
     });
     // create a livestyle server in non-proxy mode, request a less file, and autoprefix stuff in it
     // A CSS response with prefixes should be returned
-    it('request a less file and autoprefix stuff in that', function (done) {
+    it('request a less file and autoprefix stuff in that', function () {
         var appInfo = createLiveStyleTestServer({
             root: path.resolve(__dirname, 'compilessAutoprefixer'),
             autoprefixer: { browsers: ['last 2 versions', 'ie > 8'], cascade: false },
             compiless: true
         });
 
-        request('http://127.0.0.1:' + appInfo.port + '/test.less', function (err, res, body) {
-            expect(err, 'to be null');
-            expect(res.statusCode, 'to be', 200);
-            expect(res.headers['content-type'], 'to be', 'text/css');
-            expect(body, 'to be', [
-                '.nonNested {',
-                '  -webkit-animation-name: test;',
-                '  animation-name: test;',
-                '}',
-                '.nested .deep {',
-                '  -webkit-animation-name: test;',
-                '  animation-name: test;',
-                '}',
-                ''
-            ].join('\n'));
-            done();
+        return expect(appInfo.app, 'to yield exchange', {
+          request: '/test.less',
+          response: {
+            statusCode: 200,
+            headers: {
+              'Content-Type': 'text/css'
+            },
+            body: [
+              '.nonNested {',
+              '  -webkit-animation-name: test;',
+              '  animation-name: test;',
+              '}',
+              '.nested .deep {',
+              '  -webkit-animation-name: test;',
+              '  animation-name: test;',
+              '}',
+              ''
+            ].join('\n')
+          }
         });
     });
 
     // create a livestyle server in non-proxy mode, request a sass file
     // A CSS response should be returned
-    it('should compile a scss file to css', function (done) {
+    it('should compile a scss file to css', function () {
         var appInfo = createLiveStyleTestServer({
             root: path.resolve(__dirname, 'middlewares'),
             compilesass: true
         });
 
-        request('http://127.0.0.1:' + appInfo.port + '/main.scss', function (err, res, body) {
-            expect(err, 'to be null');
-            expect(res.statusCode, 'to be', 200);
-            expect(res.headers['content-type'], 'to contain', 'text/css');
-            expect(body, 'to contain', [
+
+        return expect(appInfo.app, 'to yield exchange', {
+          request: '/main.scss',
+          response: {
+            statusCode: 200,
+            headers: {
+              'Content-Type': expect.it('to contain', 'text/css')
+            },
+            body: expect.it('to contain', [
                 '.scss {',
                 '  background: blue;',
                 '  transform: translateZ(2); }',
                 '',
-            ].join('\n'));
-            done();
+            ].join('\n'))
+          }
         });
     });
 
