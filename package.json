@@ -26,10 +26,10 @@
   },
   "dependencies": {
     "errorhandler": "1.4.2",
-    "express": "4.10.1",
-    "express-autoprefixer": "^2.1.1",
+    "express": "4.13.3",
+    "express-autoprefixer": "3.3.0",
     "express-compile-sass": "^3.0.4",
-    "express-compiless": "1.0.0",
+    "express-compiless": "2.3.2",
     "express-hijackresponse": "0.2.1",
     "express-jsxtransform": "1.1.0",
     "express-processimage": "2.2.2",
@@ -44,9 +44,12 @@
   },
   "main": ".lib/createLiveStyleApp",
   "devDependencies": {
+    "autoprefixer": "5.2.0",
     "mocha": "2.2.5",
     "node-sass": "^3.2.0",
-    "unexpected": "9.4.0"
+    "postcss": "4.1.16",
+    "unexpected": "9.5.0",
+    "unexpected-express": "7.7.0"
   },
   "scripts": {
     "test": "mocha",
