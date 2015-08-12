@@ -34,7 +34,7 @@
     "express-jsxtransform": "1.1.0",
     "express-processimage": "2.2.2",
     "morgan": "1.6.1",
-    "optimist": "0.3.0",
+    "optimist": "0.6.1",
     "request": "2.9.3",
     "socket.io": "0.9.14",
     "socket.io-client": "0.9.11"
