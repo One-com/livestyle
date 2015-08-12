@@ -22,7 +22,7 @@
     "url": "git://github.com/One-com/livestyle.git"
   },
   "engines": {
-    "node": ">= 0.4.0"
+    "node": ">= 0.10.0"
   },
   "dependencies": {
     "errorhandler": "1.2.2",
