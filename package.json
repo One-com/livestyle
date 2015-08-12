@@ -31,7 +31,7 @@
     "express-compile-sass": "^3.0.4",
     "express-compiless": "2.3.2",
     "express-hijackresponse": "0.2.1",
-    "express-jsxtransform": "1.1.0",
+    "express-jsxtransform": "3.0.3",
     "express-processimage": "2.2.2",
     "morgan": "1.6.1",
     "optimist": "0.6.1",
@@ -48,6 +48,7 @@
     "mocha": "2.2.5",
     "node-sass": "^3.2.0",
     "postcss": "4.1.16",
+    "react-tools": "0.13.3",
     "unexpected": "9.5.0",
     "unexpected-express": "7.7.0"
   },
