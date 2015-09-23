@@ -27,7 +27,7 @@
   "dependencies": {
     "errorhandler": "1.4.2",
     "express": "4.13.3",
-    "express-autoprefixer": "4.0.2",
+    "express-autoprefixer": "4.0.3",
     "express-compile-sass": "^3.0.4",
     "express-compiless": "3.0.2",
     "express-jsxtransform": "4.0.1",
