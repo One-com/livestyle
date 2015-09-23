@@ -30,7 +30,7 @@
     "express-autoprefixer": "4.0.3",
     "express-compile-sass": "^3.0.4",
     "express-compiless": "3.0.3",
-    "express-jsxtransform": "4.0.1",
+    "express-jsxtransform": "4.0.2",
     "express-processimage": "3.0.2",
     "hijackresponse": "1.0.1",
     "morgan": "1.6.1",
