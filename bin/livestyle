@@ -132,7 +132,7 @@ if (root && !commandLineOptions.dead) {
         root: root,
         mtime: commandLineOptions.mtime,
         watchfile: commandLineOptions.watchfile,
-        mappings: commandLineOptions.mappings,
+        mappings: mappings,
         watchCssImages: commandLineOptions.watchcssimages
     }, require('socket.io'));
 }
