@@ -85,7 +85,7 @@ describe('livestyle server in non-proxy mode', function () {
     it('request a less file and autoprefix stuff in that', function () {
         var appInfo = createLiveStyleTestServer({
             root: path.resolve(__dirname, 'compilessAutoprefixer'),
-            autoprefixer: { browsers: ['last 2 versions', 'ie > 8'], cascade: false },
+            autoprefixer: { browsers: ['last 2 versions', 'ie > 8', 'chrome 40'], cascade: false },
             compiless: true
         });
 
@@ -142,7 +142,7 @@ describe('livestyle server in non-proxy mode', function () {
     it('should compile a scss file to css and autoprefix the response', function (done) {
         var appInfo = createLiveStyleTestServer({
             root: path.resolve(__dirname, 'middlewares'),
-            autoprefixer: { browsers: ['last 30 versions'], cascade: false },
+            autoprefixer: { browsers: ['last 2 versions', 'chrome 30'], cascade: false },
             compilesass: true
         });
 
@@ -154,7 +154,6 @@ describe('livestyle server in non-proxy mode', function () {
                 '.scss {',
                 '  background: blue;',
                 '  -webkit-transform: translateZ(2);',
-                '  -moz-transform: translateZ(2);',
                 '  transform: translateZ(2); }',
                 '',
             ].join('\n'));
