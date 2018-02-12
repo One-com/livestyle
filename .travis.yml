@@ -2,9 +2,7 @@ language: node_js
 sudo: false
 cache: false
 node_js:
-  - "0.10"
-  - "0.12"
-  - "iojs-v2.3.1"
   - "4"
+  - "6"
   - "8"
 script: "npm run-script travis"
